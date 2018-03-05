@@ -1,0 +1,48 @@
+server:
+  port: 8082
+
+
+spring:
+  application:
+    name: vc-chat-logic
+  aop:
+    auto: true
+    proxy-target-class: true
+  datasource:
+    url: jdbc:mysql://localhost/vc_chat?useSSL=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      maximum-pool-size: 200
+#    schema: classpath:/db/migration/V1__vc-chat.sql
+
+liquibase:
+  change-log: classpath:/db/changelog/db.changelog-master.xml
+  enabled: false
+
+mybatis:
+  mapper-locations:
+    - classpath:com/vcg/chat/logic/dao/*.xml
+  type-aliases-package: com.vcg.chat.model
+
+
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    prefer-ip-address: true
+  client:
+    registry-fetch-interval-seconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    root: info
+    com.vcg.chat.dao: debug
+  file: ${spring.application.name}.log

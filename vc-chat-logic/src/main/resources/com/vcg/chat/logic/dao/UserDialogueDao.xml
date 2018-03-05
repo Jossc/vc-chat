@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vcg.chat.logic.dao.UserDialogueDao">
+  <resultMap id="BaseResultMap" type="com.vcg.chat.logic.model.UserDialogue">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="to_user_id" jdbcType="VARCHAR" property="toUserId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="parent_make" jdbcType="INTEGER" property="parentMake" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="unread_total" jdbcType="INTEGER" property="unreadTotal" />
+    <result column="ordered" jdbcType="BIGINT" property="ordered" />
+    <result column="push" jdbcType="INTEGER" property="push" />
+    <result column="uni_id" jdbcType="VARCHAR" property="uniId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="last_message" jdbcType="LONGVARCHAR" property="lastMessage" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, user_id, to_user_id, parent_id, parent_make, created_time, updated_time, unread_total, 
+    ordered, push, uni_id, `type`, last_message
+  </sql>
+  <select id="selectByExample" parameterType="com.vcg.chat.logic.model.query.UserDialogueExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List_Dy" />
+    from user_dialogue
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      limit
+      <foreach collection="limit" item="num" separator=",">
+        ${num}
+      </foreach>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_dialogue
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_dialogue
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.vcg.chat.logic.model.query.UserDialogueExample">
+    delete from user_dialogue
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" keyProperty="id" parameterType="com.vcg.chat.logic.model.UserDialogue" useGeneratedKeys="true">
+    insert into user_dialogue (id, user_id, to_user_id, 
+      parent_id, parent_make, created_time, 
+      updated_time, unread_total, ordered, 
+      push, uni_id, `type`, 
+      last_message)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{toUserId,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{parentMake,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{unreadTotal,jdbcType=INTEGER}, #{ordered,jdbcType=BIGINT}, 
+      #{push,jdbcType=INTEGER}, #{uniId,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{lastMessage,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" keyProperty="id" parameterType="com.vcg.chat.logic.model.UserDialogue" useGeneratedKeys="true">
+    insert into user_dialogue
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="toUserId != null">
+        to_user_id,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="parentMake != null">
+        parent_make,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+      <if test="unreadTotal != null">
+        unread_total,
+      </if>
+      <if test="ordered != null">
+        ordered,
+      </if>
+      <if test="push != null">
+        push,
+      </if>
+      <if test="uniId != null">
+        uni_id,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="lastMessage != null">
+        last_message,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserId != null">
+        #{toUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentMake != null">
+        #{parentMake,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unreadTotal != null">
+        #{unreadTotal,jdbcType=INTEGER},
+      </if>
+      <if test="ordered != null">
+        #{ordered,jdbcType=BIGINT},
+      </if>
+      <if test="push != null">
+        #{push,jdbcType=INTEGER},
+      </if>
+      <if test="uniId != null">
+        #{uniId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="lastMessage != null">
+        #{lastMessage,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.vcg.chat.logic.model.query.UserDialogueExample" resultType="java.lang.Long">
+    select count(*) from user_dialogue
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user_dialogue
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.toUserId != null">
+        to_user_id = #{record.toUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentId != null">
+        parent_id = #{record.parentId,jdbcType=BIGINT},
+      </if>
+      <if test="record.parentMake != null">
+        parent_make = #{record.parentMake,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdTime != null">
+        created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatedTime != null">
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.unreadTotal != null">
+        unread_total = #{record.unreadTotal,jdbcType=INTEGER},
+      </if>
+      <if test="record.ordered != null">
+        ordered = #{record.ordered,jdbcType=BIGINT},
+      </if>
+      <if test="record.push != null">
+        push = #{record.push,jdbcType=INTEGER},
+      </if>
+      <if test="record.uniId != null">
+        uni_id = #{record.uniId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        `type` = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastMessage != null">
+        last_message = #{record.lastMessage,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user_dialogue
+    set id = #{record.id,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      to_user_id = #{record.toUserId,jdbcType=VARCHAR},
+      parent_id = #{record.parentId,jdbcType=BIGINT},
+      parent_make = #{record.parentMake,jdbcType=INTEGER},
+      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      unread_total = #{record.unreadTotal,jdbcType=INTEGER},
+      ordered = #{record.ordered,jdbcType=BIGINT},
+      push = #{record.push,jdbcType=INTEGER},
+      uni_id = #{record.uniId,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=INTEGER},
+      last_message = #{record.lastMessage,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vcg.chat.logic.model.UserDialogue">
+    update user_dialogue
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserId != null">
+        to_user_id = #{toUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentMake != null">
+        parent_make = #{parentMake,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unreadTotal != null">
+        unread_total = #{unreadTotal,jdbcType=INTEGER},
+      </if>
+      <if test="ordered != null">
+        ordered = #{ordered,jdbcType=BIGINT},
+      </if>
+      <if test="push != null">
+        push = #{push,jdbcType=INTEGER},
+      </if>
+      <if test="uniId != null">
+        uni_id = #{uniId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="lastMessage != null">
+        last_message = #{lastMessage,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vcg.chat.logic.model.UserDialogue">
+    update user_dialogue
+    set user_id = #{userId,jdbcType=VARCHAR},
+      to_user_id = #{toUserId,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      parent_make = #{parentMake,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      unread_total = #{unreadTotal,jdbcType=INTEGER},
+      ordered = #{ordered,jdbcType=BIGINT},
+      push = #{push,jdbcType=INTEGER},
+      uni_id = #{uniId,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=INTEGER},
+      last_message = #{lastMessage,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="Base_Column_List_Dy">
+    <if test="fields==null">
+      <include refid="Base_Column_List" />
+    </if>
+    <if test="fields!=null">
+      <foreach collection="fields" item="field" separator=",">
+        ${field}
+      </foreach>
+    </if>
+  </sql>
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into user_dialogue(
+    <include refid="Base_Column_List" />
+    )
+    values
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+	#{item.id},
+	#{item.userId},#{item.toUserId},
+	#{item.parentId},#{item.parentMake},
+	#{item.createdTime},#{item.updatedTime},
+	#{item.unreadTotal},#{item.ordered},
+	#{item.push},#{item.uniId},
+	#{item.type},#{item.lastMessage}
+	)
+    </foreach>
+  </insert>
+  <update id="updateBatch" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update `user_dialogue`
+		<trim suffix=','><set>
+			<if test="id!=null">
+				id = #{item.id},
+			</if>
+			<if test="userId!=null">
+				user_id = #{item.userId},
+			</if>
+			<if test="toUserId!=null">
+				to_user_id = #{item.toUserId},
+			</if>
+			<if test="parentId!=null">
+				parent_id = #{item.parentId},
+			</if>
+			<if test="parentMake!=null">
+				parent_make = #{item.parentMake},
+			</if>
+			<if test="createdTime!=null">
+				created_time = #{item.createdTime},
+			</if>
+			<if test="updatedTime!=null">
+				updated_time = #{item.updatedTime},
+			</if>
+			<if test="unreadTotal!=null">
+				unread_total = #{item.unreadTotal},
+			</if>
+			<if test="ordered!=null">
+				ordered = #{item.ordered},
+			</if>
+			<if test="push!=null">
+				push = #{item.push},
+			</if>
+			<if test="uniId!=null">
+				uni_id = #{item.uniId},
+			</if>
+			<if test="type!=null">
+				type = #{item.type},
+			</if>
+			<if test="lastMessage!=null">
+				last_message = #{item.lastMessage}
+			</if>
+		</set></trim>
+
+		where 
+			id = #{item.id}
+    </foreach>
+  </update>
+  <select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_dialogue
+    where id  in 
+
+    <foreach close=")" collection="list" item="id" open="(" separator=",">
+      #{id}
+    </foreach>
+  </select>
+  <select id="selectWithPage" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_dialogue
+    limit 
+
+    <foreach collection="list" item="num" separator=",">
+      ${num}
+    </foreach>
+  </select>
+</mapper>

@@ -1,0 +1,55 @@
+version: "2"
+
+services:
+  mysql:
+      image: mysql:5.7.13
+      container_name: mysql
+      hostname: mysql
+      volumes:
+           - ~/docker/mysql:/var/lib/mysql/
+      environment:
+          - MYSQL_DATABASE=vc_chat
+          - MYSQL_ROOT_PASSWORD=root
+      ports:
+          - 3306:3306
+      command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4
+
+  redis:
+      image: redis:4.0.1
+      container_name: redis
+      ports:
+          - 6379:6379
+      volumes:
+        - ~/docker/redis/data:/data
+
+  rabbit:
+      image: rabbitmq:3
+      hostname: rabbit
+      container_name: rabbit
+      volumes:
+        - ~/docker/rabbit:/var/lib/rabbitmq/mnesia/
+      ports:
+        - 5672:5672
+#        - 15672:15672
+
+  rabbit-manager:
+      image: rabbitmq:3-management
+      hostname: rabbit_manager
+      container_name: rabbit-manager
+      ports:
+        - 15672:15672
+      links:
+        - rabbit:rabbit
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+
+  shipyard-proxy:
+      image: shipyard/docker-proxy:latest
+      hostname: shipyard-proxy
+      container_name: shipyard-proxy
+      volumes:
+           - /var/run/docker.sock:/var/run/docker.sock
+      ports:
+          - 2375:2375
+      restart: always

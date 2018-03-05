@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: vc-chat-server
+  redis:
+    host: localhost
+    password:
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+
+chat:
+  configuration:
+    port: 1337
+  socket-config:
+    reuse-address: true
+    tcp-keep-alive: true
+    tcp-no-delay: true
+
+management:
+  security:
+    enabled: false
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    prefer-ip-address: true
+  client:
+    registry-fetch-interval-seconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

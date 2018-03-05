@@ -1,0 +1,17 @@
+server:
+  port: 8761
+
+
+spring:
+  application:
+    name: vc-chat-discovery
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://localhost:${server.port}/eureka/
+
+  instance:
+    prefer-ip-address: true
