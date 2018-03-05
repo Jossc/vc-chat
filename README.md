@@ -6,14 +6,14 @@
 
 ## 模块
 ---
-|模块名 | 说明 | 启动类| 端口|
-|---|---|---|---|
+|模块名 | 说明 | 启动类| 端口| 启动顺序
+|---|---|---|---|---|
 | [vc-chat-api](./vc-chat-api) | Api接口层|  无 | 无 |
-| [vc-chat-configserver](./vc-chat-configserver) |  配置文件服务器,用于存放线上配置文件|无 |  8888 |
-| [vc-chat-discovery](./vc-chat-discovery) |服务注册中心,用于构建集群使用| com.vcg.chat.discovery.DiscoveryApplication|  8761 |
-| [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.discovery.DiscoveryApplication|  8080 |
-| [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|com.vcg.chat.logic.VcChatLogicApplication |   9999 |
-| [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口 8081,socketio 1337 |
+| [vc-chat-configserver](./vc-chat-configserver) |  配置文件服务器,用于存放线上配置文件|无 |  8888 | 1
+| [vc-chat-discovery](./vc-chat-discovery) |服务注册中心,用于构建集群使用| com.vcg.chat.discovery.DiscoveryApplication|  8761 | 2
+| [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|com.vcg.chat.logic.VcChatLogicApplication |   9999 | 3 
+| [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口 8081,socketio 1337 | 4
+| [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.discovery.DiscoveryApplication|  8080 |  5
 
 
 ### vc-chat-server
@@ -55,6 +55,7 @@
 ```
 docker-compose -f ./docker/docker-compose.yml up -d
 ```
+
 
 
 ## 本项目已使用框架
