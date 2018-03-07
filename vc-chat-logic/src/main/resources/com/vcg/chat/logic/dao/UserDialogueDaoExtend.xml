@@ -104,7 +104,7 @@
             updated_time = #{updatedTime,jdbcType=TIMESTAMP},
         </if>
         <if test="unreadTotal != null">
-            unread_total = #{unreadTotal,jdbcType=INTEGER},
+            unread_total = unread_total+1,
         </if>
         <if test="ordered != null">
             ordered = #{ordered,jdbcType=BIGINT},

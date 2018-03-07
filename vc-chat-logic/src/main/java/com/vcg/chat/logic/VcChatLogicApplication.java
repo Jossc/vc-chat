@@ -39,10 +39,10 @@ public class VcChatLogicApplication {
 
     public static void main(String[] args) throws IOException {
         //pid
-        String name = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-        FileWriter writer = new FileWriter(new File("VcChatLogicApplication.pid"));
-        writer.write(name);
-        writer.close();
+        try (FileWriter writer = new FileWriter(new File("VcChatLogicApplication.pid"))) {
+            String name = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+            writer.write(name);
+        }
         SpringApplication.run(VcChatLogicApplication.class, args);
     }
 

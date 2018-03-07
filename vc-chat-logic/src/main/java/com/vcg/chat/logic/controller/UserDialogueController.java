@@ -32,6 +32,17 @@ public class UserDialogueController implements UserDialogueApi {
     }
 
     /**
+     * 创建对话
+     *
+     * @param userDialogue
+     * @return
+     */
+    @Override
+    public UserDialogue createDialogue(UserDialogue userDialogue) {
+        return userDialogueService.createDialogue(userDialogue);
+    }
+
+    /**
      * 更新对话
      *
      * @param userDialogue
@@ -61,6 +72,18 @@ public class UserDialogueController implements UserDialogueApi {
                                                        @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                        @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return userDialogueService.listUserDialogueByUserId(userId, startNum, size);
+    }
+
+    /**
+     * @param parentId 父对话id
+     * @param startNum 起始位
+     * @param size     取多少条
+     * @return
+     */
+    public List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
+                                                         @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                         @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        return userDialogueService.listUserDialogueByParentId(parentId, startNum, size);
     }
 
     /**

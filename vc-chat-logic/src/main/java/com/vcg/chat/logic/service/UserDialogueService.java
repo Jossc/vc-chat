@@ -51,8 +51,8 @@ public class UserDialogueService {
         Integer type = priMessage.getType();
 
         //双方产生唯一id
-        String sendUniId = DigestUtils.md2Hex((sendId + ":" + recId));
-        String recUniId = DigestUtils.md2Hex((recId + ":" + sendId));
+        String sendUniId = DigestUtils.md5Hex((sendId + ":" + recId));
+        String recUniId = DigestUtils.md5Hex((recId + ":" + sendId));
 
         priMessage.setCreatedTime(currentTime);
 
@@ -68,8 +68,8 @@ public class UserDialogueService {
 
         //接收人对话
         UserDialogue recDialogue = new UserDialogue()
-                .setUserId(sendId)
-                .setToUserId(recId)
+                .setUserId(recId)
+                .setToUserId(sendId)
                 .setLastMessage(message)
                 .setOrdered(currentTime.getTime())
                 .setUnreadTotal(1)
@@ -85,14 +85,6 @@ public class UserDialogueService {
         push(recId, recDialogue);
         push(sendId, sendDialogue);
 
-    }
-
-    public void push(String userId, UserDialogue userDialogue) {
-        Request request = new Request()
-                .setUserId(userId)
-                .setData(userDialogue)
-                .setCreatedTime(userDialogue.getCreatedTime());
-        pushApi.multiPush(request);
     }
 
     /**
@@ -131,7 +123,32 @@ public class UserDialogueService {
                 .addCriteria(
                         UserDialogueExample.newCriteria().andUserIdEqualTo(userId)
                 ))
-                .parallelStream()
+                .stream()
+                .peek(u -> {
+                    //判断本身是不是父对话,如果是查询本对话的所有子对话的未读数量
+                    if (u.getParentMake() != null && u.getParentMake() == 1) {
+                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(u.getId());
+                        u.setUnreadTotal(parentUnreadTotal);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @param parentId 父对话id
+     * @param startNum 起始位
+     * @param size     取多少条
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<UserDialogue> listUserDialogueByParentId(Long parentId, Integer startNum, Integer size) {
+        return userDialogueDao.selectByExample(new UserDialogueExample()
+                .withLimit(startNum, size)
+                .withOrderByClause(UserDialogueExample.ordered + " desc")
+                .addCriteria(
+                        UserDialogueExample.newCriteria().andParentIdEqualTo(parentId)
+                ))
+                .stream()
                 .peek(u -> {
                     //判断本身是不是父对话,如果是查询本对话的所有子对话的未读数量
                     if (u.getParentMake() != null && u.getParentMake() == 1) {
@@ -225,7 +242,7 @@ public class UserDialogueService {
      * 设置所有对话已读
      *
      * @param userId 用户id
-     * @return
+     * @return 已读消息数量
      */
     @Transactional
     public int readAll(String userId) {
@@ -236,5 +253,32 @@ public class UserDialogueService {
         return userDialogueDao.updateByExampleSelective(userDialogue, query);
     }
 
+    /**
+     * 创建对话
+     *
+     * @param userDialogue
+     * @return
+     */
+    @Transactional
+    public UserDialogue createDialogue(UserDialogue userDialogue) {
+        String userId = userDialogue.getUserId();
+        String toUserId = userDialogue.getToUserId();
+        String uniId = DigestUtils.md5Hex((userId + ":" + toUserId));
+        Date createdTime = new Date();
+        userDialogue.setCreatedTime(createdTime)
+                .setUniId(uniId)
+                .setUnreadTotal(0);
+        userDialogueDao.upsertSeletive(userDialogue);
+        return userDialogue;
+    }
+
+
+    public void push(String userId, UserDialogue userDialogue) {
+        Request request = new Request()
+                .setUserId(userId)
+                .setData(userDialogue)
+                .setCreatedTime(userDialogue.getCreatedTime());
+        pushApi.multiPush(request);
+    }
 
 }

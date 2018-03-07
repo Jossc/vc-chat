@@ -45,4 +45,4 @@ logging:
   level:
     root: info
     com.vcg.chat.dao: debug
-  file: ${spring.application.name}.log
+#  file: ${spring.application.name}.log
