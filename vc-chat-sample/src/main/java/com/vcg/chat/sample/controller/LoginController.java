@@ -42,7 +42,7 @@ public class LoginController {
         context.setAuthentication(null);
 
         SecurityContextHolder.clearContext();
-        return "redirect:/index.html";
+        return "redirect:/";
     }
 
 }

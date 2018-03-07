@@ -4,18 +4,31 @@
 ![架构图](https://spring.io/img/homepage/diagram-distributed-systems.svg "在这里输入图片标题")
 
 
+### 开发环境
+
+名称 | 说明
+----|------
+[Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) |Java开发环境 
+[Intellij IDEA](https://www.navicat.com/en/products) | Java 开发工具 
+[WorkBench](https://dev.mysql.com/downloads/workbench/) | 数据库连接工具 
+
+
+### 依赖docker 环境
+```
+docker-compose -f ./docker/docker-compose.yml up -d
+```
+
 ## 模块
 ---
 |模块名 | 说明 | 启动类| 端口| 启动顺序
 |---|---|---|---|---|
 | [vc-chat-api](./vc-chat-api) | Api接口层|  无 | 无 |
-| [vc-chat-configserver](./vc-chat-configserver) |  配置文件服务器,用于存放线上配置文件|无 |  8888 | 1
+| [vc-chat-configserver](./vc-chat-configserver) |  配置文件服务器,用于存放线上配置文件|com.vcg.chat.configserver.VcChatConfigServerApplication |  8888 | 1
 | [vc-chat-discovery](./vc-chat-discovery) |服务注册中心,用于构建集群使用| com.vcg.chat.discovery.DiscoveryApplication|  8761 | 2
-| [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|无 |   9999 | 3 
-| [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口 8081,socketio 1337 | 4
+| [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|com.vcg.chat.oauth2.VcChatOAuth2ServerApplication |   9999 | 3 
+| [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口:8081,socketio端口: 1337 | 4
 | [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.logic.VcChatLogicApplication|  8082 |  5
-| [vc-chat-sample](./vc-chat-sample) |  演示项目,依赖上层服务所有都启动|com.vcg.chat.sample.VcChatSampleApplication|  8080 |  6
-
+| [vc-chat-sample](./vc-chat-sample) |  演示项目,依赖上层服务所有都启动(实现部分)|com.vcg.chat.sample.VcChatSampleApplication|  8080 |  6
 
 ### vc-chat-server
 ---
@@ -30,6 +43,28 @@
 ### vc-chat-logic
 ---
 
+#### 后端存储
+
+Mysql 已实现
+> 使用简单,但是不适合单表比较大,如果使用建议分表.
+
+Cassandra 待实现
+> Cassandra 的数据模型是基于列族(Column Family)的四维或五维模型。
+> 它借鉴了 Amazon 的 Dynamo 和 Google's BigTable 的数据结构和功能特点，采用 Memtable 和 SSTable 的方式进行存储。
+> 在 Cassandra 写入数据之前，需要先记录日志 (CommitLog),然后数据开始写入到 Column Family 对应的 Memtable 中,Memtable 是一种按照 key 排序数据的内存结构.
+> 在满足一定条件时，再把 Memtable 的数据批量的刷新到磁盘上，存储为 SSTable.
+
+DynamoDB 待实现
+
+TableStore 待实现
+
+HBase 待实现
+
+分片规则:
+1. user_dialogue 表建议以user_id 作为分片键
+2. pri_message 表建议以 dialogue_id 作为分片键
+
+
 #### 表结构
 
 1. [user_dialogue 好友列表](./docs/model/UserDialogue.md)
@@ -40,24 +75,6 @@
 
 1. [LogicApi](./docs/api/LogicApi.md)
 2. [ServerApi.md](./docs/api/ServerApi.md)
-
-
-
-### 开发环境
-
-名称 | 说明
-----|------
-[Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) |Java开发环境 
-[Intellij IDEA](https://www.navicat.com/en/products) | Java 开发工具 
-[WorkBench](https://dev.mysql.com/downloads/workbench/) | 数据库连接工具 
-
-
-## 依赖docker 环境
-```
-docker-compose -f ./docker/docker-compose.yml up -d
-```
-
-
 
 ## 本项目已使用框架
 |技术 | 名称 | 官网|
