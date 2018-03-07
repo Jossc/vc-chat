@@ -4,6 +4,7 @@ import com.vcg.chat.api.model.Request;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,7 +23,7 @@ public interface PushApi {
      */
     @ApiOperation(value = "单机推送")
     @PostMapping(value = "singlePush")
-    void singlePush(@RequestBody Request request);
+    void singlePush(@Validated @RequestBody Request request);
 
 
     /**
@@ -33,6 +34,6 @@ public interface PushApi {
      */
     @ApiOperation(value = "多线路推送")
     @PostMapping(value = "multiPush")
-    void multiPush(@RequestBody Request request);
+    void multiPush(@Validated @RequestBody Request request);
 
 }

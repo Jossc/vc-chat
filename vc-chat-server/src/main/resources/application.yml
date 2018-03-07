@@ -18,6 +18,13 @@ chat:
     reuse-address: true
     tcp-keep-alive: true
     tcp-no-delay: true
+    #由于spring oauth2 client 实现过于复杂,故单独实现
+  oauth2:
+    user-info-url: http://localhost:9999/me
+    client-id: acme
+    client-secret: acmesecret
+    scope: openid
+
 
 management:
   security:

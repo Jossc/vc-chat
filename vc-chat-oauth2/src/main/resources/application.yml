@@ -1,0 +1,36 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: vc-chat-oauth2
+  datasource:
+    url: jdbc:mysql://localhost/vc_chat
+    username: root
+    password: root
+    schema: classpath:db/migration/v1__vc_oauth.sql
+    hikari:
+      maximum-pool-size: 200
+  aop:
+    proxy-target-class: true
+  redis:
+    host: localhost
+    password:
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    prefer-ip-address: true
+  client:
+    registry-fetch-interval-seconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.security: debug
+    org.springframework.web: debug

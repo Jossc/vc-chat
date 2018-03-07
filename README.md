@@ -13,7 +13,8 @@
 | [vc-chat-discovery](./vc-chat-discovery) |服务注册中心,用于构建集群使用| com.vcg.chat.discovery.DiscoveryApplication|  8761 | 2
 | [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|无 |   9999 | 3 
 | [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口 8081,socketio 1337 | 4
-| [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.discovery.DiscoveryApplication|  8080 |  5
+| [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.logic.VcChatLogicApplication|  8082 |  5
+| [vc-chat-sample](./vc-chat-sample) |  演示项目,依赖上层服务所有都启动|com.vcg.chat.sample.VcChatSampleApplication|  8080 |  6
 
 
 ### vc-chat-server
@@ -31,8 +32,8 @@
 
 #### 表结构
 
-1. [user_dialogue](./docs/model/UserDialogue.md)
-2. [pri_message](./docs/model/PriMessage.md)
+1. [user_dialogue 好友列表](./docs/model/UserDialogue.md)
+2. [pri_message 消息存储表](./docs/model/PriMessage.md)
 
 
 ### api
@@ -47,7 +48,7 @@
 名称 | 说明
 ----|------
 [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) |Java开发环境 
-[Intellij IDEA](https://www.navicat.com/en/products) | 应用容器引擎 
+[Intellij IDEA](https://www.navicat.com/en/products) | Java 开发工具 
 [WorkBench](https://dev.mysql.com/downloads/workbench/) | 数据库连接工具 
 
 
@@ -70,6 +71,10 @@ docker-compose -f ./docker/docker-compose.yml up -d
 |Swagger2 | 接口测试框架  | [http://swagger.io/](http://swagger.io/)|
 |MyBatis | ORM框架  | [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html)|
 |Spring Data | Orm 封装  | [https://projects.spring.io/spring-data/](https://projects.spring.io/spring-data/)|
+|RabbitMq | 消息队列  | [http://www.rabbitmq.com/](http://www.rabbitmq.com/)|
+|SocketIO Java版实现 | 消息队列  | [https://github.com/mrniko/netty-socketio](https://github.com/mrniko/netty-socketio)|
+|SocketIO 其他语言客户端 | 消息队列  | [https://socket.io/](https://socket.io/)|
+|Docker | 容器框架  | [https://www.docker.com/](https://www.docker.com/)|
 
 ## 后端可选框架框架:
 |技术 | 名称 | 官网|
@@ -106,7 +111,6 @@ Lombok | 简化Pojo |[https://projectlombok.org/](https://projectlombok.org/)
 #### 快速构建应用
 1. [Start spring](http://start.spring.io)
 2. [Jhipster](https://start.jhipster.tech/#/)
-
 
 ## 构建应用并启动
 

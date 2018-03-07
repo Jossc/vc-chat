@@ -62,9 +62,9 @@ public class SessionListener implements ConnectListener, DisconnectListener {
      */
     public void unregister(String userId, String sessionId) {
         try {
-            //注册本地路由
+            //取消注册本地路由
             this.remoteRouterManager.unRegister(userId, sessionId);
-            //注册远程路由
+            //取消注册远程路由
             this.localRouterManager.unRegister(userId, sessionId);
         } catch (Exception e) {
             log.warn("unregister error", e);
@@ -87,10 +87,13 @@ public class SessionListener implements ConnectListener, DisconnectListener {
                     .setHost(registration.getHost())
                     .setClientType(clientType)
                     .setPort(registration.getPort());
+
             //注册本地路由
-            this.remoteRouterManager.register(key, new RemoteRouter(clientLocation));
-            //注册远程路由
             this.localRouterManager.register(key, new LocalRouter(socketIOClient));
+
+            //注册远程路由
+            this.remoteRouterManager.register(key, new RemoteRouter(clientLocation));
+
         } catch (Exception e) {
             this.localRouterManager.unRegister(key, sessionId);
             if (socketIOClient.isChannelOpen()) {

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sign in</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!--bootstrap-->
+    <link rel="stylesheet" href="/webjars/adminlte/2.3.6/bootstrap/css/bootstrap.css">
+    <!--font-awesome-->
+    <link rel="stylesheet" href="/webjars/font-awesome/4.6.3/css/font-awesome.css">
+    <!--AdminLTE-->
+    <link rel="stylesheet" href="/webjars/adminlte/2.3.6/dist/css/AdminLTE.css">
+
+    <link rel="stylesheet" href="/webjars/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="/webjars/adminlte/2.3.6/plugins/iCheck/square/blue.css">
+
+
+    <style type="text/css">
+        .login-header-image:hover {
+            box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+        }
+
+    </style>
+</head>
+<body class="hold-transition login-page" ng-app="oauthApp">
+<div class="login-box" ng-controller="oauthController">
+    <div class="login-logo">
+        <b>Chat</b>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body" id="loginDiv" style="display: none">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <form ng-submit="login(username,password)">
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" ng-model="username" name="username" placeholder="Email/Mobile"
+                       required>
+                <span class="fa fa-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" ng-model="password" name="password" placeholder="Password"
+                       required>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign in</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+
+
+    </div>
+    <!-- /.login-box-body -->
+    <div class="login-box-body" id="authorizeDiv">
+        <form id="confirmationForm" action="/oauth/authorize" method="post">
+            <div class="social-auth-links text-center">
+                <a href="javascript:void(0)" ng-click="authorize()">
+                    <img class="img-thumbnail login-header-image" width="80" height="80"
+                         src="/webjars/adminlte/2.3.6/dist/img/user2-160x160.jpg"
+                         alt="User Image">
+                    <!--<img class="img-thumbnail login-header-image" width="80" height="80" ng-src="{{user.image}}"-->
+                    <!--alt="User Image">-->
+                </a>
+            </div>
+            <div class="social-auth-links text-center">
+                <p>{{user.username}}</p>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="button" value="Authorize" ng-click="authorize()" class="btn btn-primary btn-block btn-flat">
+            </div>
+
+            <div class="row">
+                <div class="col-xs-8">
+                    <a href="javascript:void(0)" ng-click="logout()">
+                        Change Account
+                    </a>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                </div>
+                <!-- /.col -->
+            </div>
+            <input name="user_oauth_approval" value="true" type="hidden">
+            <input type="hidden" name="scope.openid" value="true">
+            <input name="authorize" value="Authorize" type="hidden">
+        </form>
+    </div>
+    <div class="modal fade" id="messageModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Message</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" ng-model="param"/>
+                    <p>{{msg}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type='button' class='btn btn-primary' data-dismiss='modal'>Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<!-- /.login-box -->
+<script src="/webjars/adminlte/2.3.6/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/webjars/adminlte/2.3.6/plugins/jQueryUI/jquery-ui.min.js"></script>
+<script src="/webjars/angularjs/1.4.8/angular.js"></script>
+<script src="/webjars/adminlte/2.3.6/bootstrap/js/bootstrap.js"></script>
+<script>
+    var oauthApp = angular.module("oauthApp", [])
+        .config(["$httpProvider", function ($httpProvider) {
+            //这个定制的 "X-Requested-With"是由浏览器客户端发送的约定的消息头,
+            // 而它之前在Angular中是默认有的，不过在 1.3.0 中被拿掉了。
+            // Spring Security 会对其进行响应，在一个401响应中不发送 "WWW-Authenticate" 消息头,
+            // 而这样浏览器就不会弹出一个认证对话框了 (这种效果是我们想要的，因为我们想要对认证过程进行控制)。
+            $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+        }]);
+    oauthApp.controller("oauthController", function ($scope, $location, $http) {
+
+        $scope.authenticate = function () {
+            //判断用户是否登录
+            $http.get("/user")
+                .success(function (response, status, headers) {
+                    $scope.user = response;
+                    $scope.logined();
+                })
+                .error(function (response, status) {
+                    $scope.unLogin();
+                });
+
+            //获取授权网站信息
+            $http.get("/user/company")
+                .success(function (response) {
+                    $scope.company = response.company;
+                    $scope.redirectUrl = response.redirectUrl;
+                    $scope.loginType = response.loginType;
+                })
+        };
+
+
+        $scope.authenticate();
+
+
+        $scope.login = function (username, password) {
+            var headers = {authorization: "Basic " + btoa(username + ":" + password)};
+            $http.get("/user", {headers: headers})
+                .success(function (response, status, headers) {
+                    $scope.user = response;
+                    //切换到授权页面
+                    $scope.logined();
+                })
+                .error(function (response, status) {
+                    $scope.msg = "用户名或密码错误!";
+                    $("#messageModal").modal('toggle');
+                })
+        };
+
+
+        $scope.authorize = function () {
+            //判断是否有授权网站,如果没有停留到本页面!
+            if (angular.isDefined($scope.redirectUrl)) {
+                $("#confirmationForm").submit();
+            } else {
+                $scope.msg = "未发现授权网站!";
+                $("#messageModal").modal('toggle');
+            }
+        };
+
+        //登出,记录回跳网站
+        $scope.logout = function () {
+            $http.get("/logout");
+            $scope.unLogin();
+        };
+
+        $scope.logined = function () {
+            if (angular.isDefined($scope.redirectUrl)) {
+                window.location = $scope.redirectUrl;
+            }
+            $("#loginDiv").hide();
+            $("#authorizeDiv").show();
+        };
+
+        $scope.unLogin = function () {
+            $("#loginDiv").show();
+            $("#authorizeDiv").hide();
+        };
+    })
+
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import com.vcg.chat.server.service.PushService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class PushController implements PushApi {
     private PushService pushService;
 
 
-    @ApiOperation(value = "单机推送", notes = "需要sessionid 进行推送")
+    @ApiOperation(value = "单机推送", notes = "需要userId + sessionid 进行推送")
     public void singlePush(@RequestBody Request request) {
         pushService.singlePush(request);
     }

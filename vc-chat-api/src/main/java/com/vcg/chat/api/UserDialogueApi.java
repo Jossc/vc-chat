@@ -26,6 +26,15 @@ public interface UserDialogueApi {
     @PostMapping(value = "sendMessage")
     void sendMessage(@RequestBody PriMessage priMessage);
 
+    /**
+     * 创建对话
+     *
+     * @param userDialogue
+     */
+    @ApiOperation(value = "创建对话")
+    @PostMapping(value = "createDialogue")
+    UserDialogue createDialogue(@RequestBody UserDialogue userDialogue);
+
 
     /**
      * 更新对话
@@ -60,6 +69,18 @@ public interface UserDialogueApi {
     List<UserDialogue> listUserDialogueByUserId(@ApiParam(value = "用户id") @PathVariable(value = "userId") String userId,
                                                 @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                 @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size);
+
+    /**
+     * @param parentId 父对话id
+     * @param startNum 起始位
+     * @param size     取多少条
+     * @return
+     */
+    @ApiOperation(value = "获取对话列表")
+    @GetMapping(value = "listUserDialogueByParentId/{parentId}")
+    List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
+                                                  @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                  @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size);
 
     /**
      * 对话消息列表
