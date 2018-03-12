@@ -75,10 +75,27 @@ HBase 待实现
 #### Questions
 
 Q. 架构图给箭头增加数字标号，并给出几个场景，以及相应的箭头数字顺序（比如用户登录，是箭头 1 -> 3 -> 6 -> 9 这么一个流程）
+
+1. 已修改
+
 Q. 完善两个表中对于不同 type 取值对其他列的影响 （比如 pri_message.type为关注时，uni_id怎么取值？user_dialogue.type为部落时to_user_id/parent_id/parent_make如何取值？等等）
+
+pri_message.type为关注时，uni_id怎么取值？
+
+1. pri_message.uni_id由业务系统自己组装uni_id，关注/点赞消息比较特殊.用户只能进行一条数据进行操作,将会以 send_id+"\_"+rec_id+"\_"+type+dialogue_id 进行md5作为唯一id。
+2. 普通消息并不会生成uni_id.
+
+user_dialogue.type为部落时to_user_id/parent_id/parent_make如何取值？
+
+1. type只是作为一个过滤条件，并没有对其他字段进行强关联.
+
 Q. “500px摄影社区”的广播逻辑和数据存储格式
 
-
+共有两张表用于维护广播表:
+1. [system_message](./docs/model/SystemMessage.md) 该表用于存储广播消息
+2. [user_system_message](./docs/model/UserSystemMessage.md) 该表用于存储当前用于已经接收到的系统消息，防止重复推送
+3. 当后台广播一条系统消息后,每当用户调用getUserUnreadTotal接口获取未读消息数时候,会先取系统消息表的最后一条消息的id，然后通过user_system_message查询这个用户已经接收到的广播的消息id。如果不相等，将会以用户已经接收到的广播
+消息id，作为条件从system_message里进行查询大于用户已经接收到的广播消息id,进行插入。返回用户原有的未读消息数量+广播消息数
 
 Q.vc-chat-server集群内路由转发逻辑细节
 
