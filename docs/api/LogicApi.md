@@ -17,7 +17,7 @@ Api Documentation
 
 
 ### URI scheme
-*Host* : localhost:8080  
+*Host* : localhost:8082  
 *BasePath* : /
 
 
@@ -34,6 +34,65 @@ Api Documentation
 <a name="userdialogue_resource"></a>
 ### UserDialogue
 User Dialogue Controller
+
+
+<a name="createdialogue"></a>
+#### 创建对话
+```
+POST //api/userDialogue/createDialogue
+```
+
+
+##### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|OK|[UserDialogue](#userdialogue)|
+|**201**|Created|No Content|
+|**401**|Unauthorized|No Content|
+|**403**|Forbidden|No Content|
+|**404**|Not Found|No Content|
+
+
+##### Consumes
+
+* `application/json`
+
+
+##### Produces
+
+* `*/*`
+
+
+##### Example HTTP request
+
+###### Request path
+```
+//api/userDialogue/createDialogue
+```
+
+
+##### Example HTTP response
+
+###### Response 200
+```
+json :
+{
+  "createdTime" : "string",
+  "id" : 0,
+  "lastMessage" : "string",
+  "ordered" : 0,
+  "parentId" : 0,
+  "parentMake" : 0,
+  "push" : 0,
+  "toUserId" : "string",
+  "type" : 0,
+  "uniId" : "string",
+  "unreadTotal" : 0,
+  "updatedTime" : "string",
+  "userId" : "string"
+}
+```
 
 
 <a name="deletedialogue"></a>
@@ -262,6 +321,83 @@ json :
   "sendId" : "string",
   "type" : 0,
   "uniId" : "string"
+} ]
+```
+
+
+<a name="listuserdialoguebyparentid"></a>
+#### 获取对话列表
+```
+GET //api/userDialogue/listUserDialogueByParentId/{parentId}
+```
+
+
+##### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**parentId**  <br>*optional*|父对话id|integer (int64)||
+|**Query**|**size**  <br>*optional*|取多少条|integer (int32)|`10`|
+|**Query**|**startNum**  <br>*optional*|起始位|integer (int32)|`0`|
+
+
+##### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|OK|< [UserDialogue](#userdialogue) > array|
+|**401**|Unauthorized|No Content|
+|**403**|Forbidden|No Content|
+|**404**|Not Found|No Content|
+
+
+##### Consumes
+
+* `application/json`
+
+
+##### Produces
+
+* `*/*`
+
+
+##### Example HTTP request
+
+###### Request path
+```
+//api/userDialogue/listUserDialogueByParentId/0
+```
+
+
+###### Request query
+```
+json :
+{
+  "size" : 0,
+  "startNum" : 0
+}
+```
+
+
+##### Example HTTP response
+
+###### Response 200
+```
+json :
+[ {
+  "createdTime" : "string",
+  "id" : 0,
+  "lastMessage" : "string",
+  "ordered" : 0,
+  "parentId" : 0,
+  "parentMake" : 0,
+  "push" : 0,
+  "toUserId" : "string",
+  "type" : 0,
+  "uniId" : "string",
+  "unreadTotal" : 0,
+  "updatedTime" : "string",
+  "userId" : "string"
 } ]
 ```
 
