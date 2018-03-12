@@ -135,9 +135,11 @@ online|在线(暂未使用)
 
 Q. vc-chat-server集群内怎么做ios/android push notification的
 
-1. 现阶段未自己实现相关Notification，使用的第三方提供Notification的支持。可以自己做Notification的通知
-2. IOS使用 [友盟推送](https://adplus.umeng.com/index.php) 第三方提供Notification的支持
-3. Android [小米推送](https://dev.mi.com/console/appservice/push.html) 第三方提供Notification的支持
+1. 现阶段未自己实现相关Notification，使用的第三方提供Notification的支持。
+2. 国内IOS使用 [友盟推送](https://adplus.umeng.com/index.php) 第三方提供Notification的支持
+3. 国内Android [小米推送](https://dev.mi.com/console/appservice/push.html) 第三方提供Notification的支持
+4. 国外建议使用[苹果官方APNS](https://developer.apple.com/notifications/)
+5. 国外建议使用[Google GCM](https://developers.google.com/cloud-messaging/)
 
 Q. 解释为什么 type需要冗余存储
 
