@@ -42,7 +42,7 @@ public class Request {
      * 消息发送失败已经重试的次数
      */
     @NotNull
-    @ApiModelProperty(value = "重试次数")
+    @ApiModelProperty(value = "已经重试的次数")
     private Integer retryCount = 0;
 
     /**

@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -69,8 +71,8 @@ public class UserDialogueController implements UserDialogueApi {
      * @return
      */
     public List<UserDialogue> listUserDialogueByUserId(@ApiParam(value = "用户id") @PathVariable(value = "userId") String userId,
-                                                       @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                       @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                                       @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                       @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return userDialogueService.listUserDialogueByUserId(userId, startNum, size);
     }
 
@@ -81,8 +83,8 @@ public class UserDialogueController implements UserDialogueApi {
      * @return
      */
     public List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
-                                                         @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                         @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                                         @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                         @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return userDialogueService.listUserDialogueByParentId(parentId, startNum, size);
     }
 
@@ -93,8 +95,8 @@ public class UserDialogueController implements UserDialogueApi {
      * @return
      */
     public List<PriMessage> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
-                                                       @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                       @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                                       @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                       @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return userDialogueService.listPriMessageByDialogueId(dialogueId, startNum, size);
     }
 

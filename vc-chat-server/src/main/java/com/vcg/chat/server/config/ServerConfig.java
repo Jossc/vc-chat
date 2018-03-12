@@ -2,6 +2,7 @@ package com.vcg.chat.server.config;
 
 import com.corundumstudio.socketio.SocketConfig;
 import com.corundumstudio.socketio.SocketIOServer;
+import com.vcg.chat.server.ampq.RequestPushListener;
 import com.vcg.chat.server.ampq.RequestRetryListener;
 import com.vcg.chat.server.filter.AuthFilter;
 import com.vcg.chat.server.filter.Filter;
@@ -14,6 +15,7 @@ import com.vcg.chat.server.store.RedisStore;
 import com.vcg.chat.server.store.Store;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -90,10 +92,11 @@ public class ServerConfig {
 
     /**
      * session监听器
-     * @param localRouterManager 本地路由
+     *
+     * @param localRouterManager  本地路由
      * @param remoteRouterManager 远程路由
-     * @param registration 本机在服务中心注册的信息
-     * @param filters 过滤器
+     * @param registration        本机在服务中心注册的信息
+     * @param filters             过滤器
      * @return
      */
     @Bean
@@ -134,7 +137,6 @@ public class ServerConfig {
         return new RequestRetryListener();
     }
 
-
     /**
      * 推送服务
      *
@@ -164,6 +166,7 @@ public class ServerConfig {
                 .setConnectionManager(manager)
                 .setMaxConnPerRoute(500)
                 .setMaxConnTotal(500)
+                .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
                 .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
                 .setDefaultRequestConfig(requestConfig)
                 .build();
@@ -186,6 +189,7 @@ public class ServerConfig {
         CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClientBuilder.create()
                 .setMaxConnPerRoute(500)
                 .setMaxConnTotal(500)
+                .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
                 .setDefaultRequestConfig(requestConfig)
                 .build();
         return new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory(closeableHttpAsyncClient));

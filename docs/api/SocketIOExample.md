@@ -20,7 +20,7 @@ https://github.com/socketio/socket.io-client.git
   //需要先获取连接token
   var token;
   $.ajax({ 
-        url: "/community/sitemessage/v2/getToken", 
+        url: "/getToken", 
         dataType:json,
         method: get,
         async: false,

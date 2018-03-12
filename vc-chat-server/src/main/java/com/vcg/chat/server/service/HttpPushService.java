@@ -7,6 +7,7 @@ import com.vcg.chat.server.config.ChatProperties;
 import com.vcg.chat.server.router.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -165,12 +166,13 @@ public class HttpPushService implements PushService {
                                 .setRetryCount(retryCount)
                                 .setUserId(request.getUserId());
                         amqpTemplate.convertAndSend(
+                                ExchangeTypes.DIRECT,
                                 QueueName.CHAT_RETRY_QUEUE_NAME,
                                 requestCopy,
                                 message -> {
                                     //使用延迟队列,防止短暂的网络抖动导致,retryCount 快速增大丢弃消息
                                     MessageProperties messageProperties = message.getMessageProperties();
-                                    messageProperties.setDelay(request.getRetryCount() == null ? 0 : request.getRetryCount() * 1000);
+                                    messageProperties.setDelay(retryCount * 1000);
                                     return message;
                                 }
                         );

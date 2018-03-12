@@ -11,4 +11,7 @@ public interface QueueName {
     String CHAT_RETRY_QUEUE_NAME = "chatRetryQueue";
 
 
+    String CHAT_BROADCAST_QUEUE_NAME = "chatBroadcastQueue";
+
+
 }

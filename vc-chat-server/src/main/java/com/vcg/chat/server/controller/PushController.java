@@ -22,16 +22,21 @@ public class PushController implements PushApi {
     @Autowired
     private PushService pushService;
 
-
     @ApiOperation(value = "单机推送", notes = "需要userId + sessionid 进行推送")
-    public void singlePush(@RequestBody Request request) {
+    public void singlePush(@Validated @RequestBody Request request) {
         pushService.singlePush(request);
     }
 
 
     @ApiOperation(value = "多链路推送", notes = "需要用户id进行推送")
-    public void multiPush(@RequestBody Request request) {
+    public void multiPush(@Validated @RequestBody Request request) {
         pushService.multiPush(request);
     }
+
+//    @ApiOperation(value = "多链路推送", notes = "需要用户id进行推送")
+//    public void mqPush(@Validated @RequestBody Request request) {
+//        amqpTemplate.convertAndSend(ExchangeTypes.FANOUT, QueueName.CHAT_BROADCAST_QUEUE_NAME, request);
+//    }
+
 
 }

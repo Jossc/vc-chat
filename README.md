@@ -69,7 +69,64 @@ HBase 待实现
 
 1. [user_dialogue 好友列表](./docs/model/UserDialogue.md)
 2. [pri_message 消息存储表](./docs/model/PriMessage.md)
+3. [system_message 系统广播消息表](./docs/model/SystemMessage.md)
+4. [user_system_message 用户已经接收到的系统广播消息记录表](./docs/model/UserSystemMessage.md)
 
+#### Questions
+
+Q. 架构图给箭头增加数字标号，并给出几个场景，以及相应的箭头数字顺序（比如用户登录，是箭头 1 -> 3 -> 6 -> 9 这么一个流程）
+Q. 完善两个表中对于不同 type 取值对其他列的影响 （比如 pri_message.type为关注时，uni_id怎么取值？user_dialogue.type为部落时to_user_id/parent_id/parent_make如何取值？等等）
+Q. “500px摄影社区”的广播逻辑和数据存储格式
+
+
+
+Q.vc-chat-server集群内路由转发逻辑细节
+
+1. 前台有阿里云网关/Nginx网关进行转发。由于阿里云网关/Nginx只能做ip_hash/RoundRobin进行转发代理到固定机器。不能按照业务逻辑用户id进行转发代理,所以集群下，一个用户可能会连接到不同的vc-chat-server服务器中。
+2. 每台vc-chat-server服务器，都维持一个本地路由表和远程路由表.当一个客户端建立连接时,首先通过OAuth2 进行验证,验证通过后拿到用户id，首先进行远程存储,然后进行本地连接存储
+3. 当被调用到multiPush 接口时,会先根据用户id查询远程路由表。拿到远程路由表后进行遍历，如果用户建立的连接是本机，将直接调用SocketIoClient 进行推送,如果是当前用户建立的连接不是本机，组装Request，通过调用singlePush
+转发到远程路由表中相关建立连接的服务器中.
+
+远程存储结构：
+1. 类型为map, key为 chat:users:userId  
+2. 存储格式
+```
+{
+  "clientLocation": {
+    "clientType": "web",
+    "host": "192.168.19.167",
+    "port": 8081,
+    "sessionId": "340bfe7e-16d5-45e1-ac90-79ce056e198e"
+  },
+  "offline": false,
+  "online": true
+}
+```
+名称 | 说明
+---|---
+clientType | 客户端类型(暂未使用)
+host|客户端所连接的服务器ip地址
+port|客户端所连接的服务器端口号
+sessionId|socketio建立连接的sessionId
+offline|离线(暂未使用)
+online|在线(暂未使用)
+
+本地存储结构：
+1. key 类型为map 
+2. 存储格式: Map<用户id,Map<sessionId,SocketIOClient>>  
+
+
+Q. vc-chat-server集群内怎么做ios/android push notification的
+
+1. 现阶段未自己实现相关Notification，使用的第三方提供Notification的支持。可以自己做Notification的通知
+2. IOS使用 [友盟推送](https://adplus.umeng.com/index.php) 第三方提供Notification的支持
+3. Android [小米推送](https://dev.mi.com/console/appservice/push.html) 第三方提供Notification的支持
+
+Q. 解释为什么 type需要冗余存储
+
+1. 现阶段共有9总消息类型分别是 0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动。以上消息除了普通消息，每个类型对应一个系统用户。当时为了单独过滤出相关消息列表，
+使列表不混入用户消息列表里,做单独呈现。 当前已经取消这种方式,改用 ordered 字段做相关排序,设置系统消息的权重为比较大的值。使其排在最前。Type 只做冗余查询使用(暂时还未使用到)
+![消息类型](./docs/png/type.png)
 
 ### api
 
@@ -89,8 +146,8 @@ HBase 待实现
 |MyBatis | ORM框架  | [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html)|
 |Spring Data | Orm 封装  | [https://projects.spring.io/spring-data/](https://projects.spring.io/spring-data/)|
 |RabbitMq | 消息队列  | [http://www.rabbitmq.com/](http://www.rabbitmq.com/)|
-|SocketIO Java版实现 | 消息队列  | [https://github.com/mrniko/netty-socketio](https://github.com/mrniko/netty-socketio)|
-|SocketIO 其他语言客户端 | 消息队列  | [https://socket.io/](https://socket.io/)|
+|SocketIO Java版实现 | WebSocket框架服务端  | [https://github.com/mrniko/netty-socketio](https://github.com/mrniko/netty-socketio)|
+|SocketIO 其他语言客户端 | WebSocket客户端  | [https://socket.io/](https://socket.io/)|
 |Docker | 容器框架  | [https://www.docker.com/](https://www.docker.com/)|
 
 ## 后端可选框架框架:
@@ -130,9 +187,3 @@ Lombok | 简化Pojo |[https://projectlombok.org/](https://projectlombok.org/)
 2. [Jhipster](https://start.jhipster.tech/#/)
 
 ## 构建应用并启动
-
----
-```
-sh ./mvnw clean package
-java -server -Xms1g -Xmx1g  -Dspring.profiles.active=prod -Dspring.cloud.config.profile=prod -jar  ./target/vc-chat-0.0.1-SNAPSHOT.jar
-```

@@ -4,8 +4,8 @@
 Number|Name|Type|Length|Digit|NotNull|Default|Remark
   ---|---|---|---|---|---|---|---
 1|	id|	Long|	20|	0|	Y|	null|	   
-2|	user_id|	String|	64|	0|	Y|	null|	   
-3|	to_user_id|	String|	64|	0|	Y|	null|	该字段为 冗余字段，用于记录对方id，方便用于查找头像   
+2|	user_id|	String|	64|	0|	Y|	null|	用户id
+3|	to_user_id|	String|	64|	0|	Y|	null|	对方id   
 4|	parent_id|	Long|	20|	0|	Y|	0|	父对话id   
 5|	parent_make|	Integer|	10|	0|	Y|	0|	父字段标识位 0 不是 1 是   
 6|	created_time|	Date|	19|	0|	Y|	null|	   
@@ -23,7 +23,7 @@ Number|Name|Type|Length|Digit|NotNull|Default|Remark
 CREATE TABLE IF NOT EXISTS `user_dialogue` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` varchar(64) NOT NULL,
-  `to_user_id` varchar(64) NOT NULL COMMENT '该字段为 冗余字段，用于记录对方id，方便用于查找头像',
+  `to_user_id` varchar(64) NOT NULL COMMENT '对方id',
   `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '父对话id',
   `parent_make` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '父字段标识位 0 不是 1 是',
   `created_time` datetime NOT NULL,
@@ -43,6 +43,4 @@ CREATE TABLE IF NOT EXISTS `user_dialogue` (
   KEY `to_user_id` (`to_user_id`),
   KEY `ordered_and userId` (`ordered`,`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 ```

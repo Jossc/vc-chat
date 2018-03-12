@@ -36,4 +36,16 @@ public interface PushApi {
     @PostMapping(value = "multiPush")
     void multiPush(@Validated @RequestBody Request request);
 
+
+//    /**
+//     * 该方法 主要根据用户id 进行推送.利用消息队列的 fanout 广播机制,
+//     * 广播到每台机器上,每台机器直接用本地路由表进行推送避免消息二次转发
+//     *
+//     * @param request
+//     * @return
+//     */
+//    @ApiOperation(value = "多线路推送")
+//    @PostMapping(value = "mqPush")
+//    void mqPush(@Validated @RequestBody Request request);
+
 }

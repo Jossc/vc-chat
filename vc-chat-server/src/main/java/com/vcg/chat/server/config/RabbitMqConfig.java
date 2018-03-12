@@ -1,12 +1,13 @@
 package com.vcg.chat.server.config;
 
 import com.vcg.chat.server.ampq.QueueName;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,9 +18,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
 
     @Bean
-    @ConditionalOnMissingBean
     public Queue retryQueue() {
-        return new Queue(QueueName.CHAT_RETRY_QUEUE_NAME,true);
+        return new Queue(QueueName.CHAT_RETRY_QUEUE_NAME, true);
     }
 
     @Bean

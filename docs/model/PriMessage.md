@@ -30,7 +30,4 @@ CREATE TABLE IF NOT EXISTS `pri_message` (
   KEY `created_time` (`created_time`),
   KEY `type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
 ```

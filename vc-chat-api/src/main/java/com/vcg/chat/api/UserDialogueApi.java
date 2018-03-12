@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -67,8 +69,8 @@ public interface UserDialogueApi {
     @ApiOperation(value = "获取对话列表")
     @GetMapping(value = "listUserDialogueByUserId/{userId}")
     List<UserDialogue> listUserDialogueByUserId(@ApiParam(value = "用户id") @PathVariable(value = "userId") String userId,
-                                                @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size);
+                                                @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size);
 
     /**
      * @param parentId 父对话id
@@ -79,8 +81,8 @@ public interface UserDialogueApi {
     @ApiOperation(value = "获取对话列表")
     @GetMapping(value = "listUserDialogueByParentId/{parentId}")
     List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
-                                                  @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                  @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size);
+                                                  @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                  @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size);
 
     /**
      * 对话消息列表
@@ -93,8 +95,8 @@ public interface UserDialogueApi {
     @ApiOperation(value = "对话消息列表")
     @GetMapping(value = "listPriMessageByDialogueId/{dialogueId}")
     List<PriMessage> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
-                                                @ApiParam(value = "起始位") @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                @ApiParam(value = "取多少条") @RequestParam(value = "size", defaultValue = "10") Integer size);
+                                                @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size);
 
     /**
      * 统计未读数量

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8"/>
+
+    <title>Demo Chat</title>
+
+    <link href="bootstrap.css" rel="stylesheet">
+
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        #console {
+            height: 400px;
+            overflow: auto;
+        }
+
+        .username-msg {
+            color: orange;
+        }
+
+        .connect-msg {
+            color: green;
+        }
+
+        .disconnect-msg {
+            color: red;
+        }
+
+        .send-msg {
+            color: #888
+        }
+    </style>
+
+
+    <script src="js/socket.io/socket.io.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/jquery-1.7.2.min.js"></script>
+
+    <script>
+
+        //通知框，与websocket 无关 请忽略
+        window.addEventListener("load", function () {
+            if (Notification && Notification.permission !== "granted") {
+                Notification.requestPermission(function (status) {
+                    if (Notification.permission !== status) {
+                        Notification.permission = status;
+                    }
+                });
+            }
+        });
+
+        var socket = io.connect('http://localhost:1337/?clientType=web&accessToken=3cadca61-809e-40cc-9ccc-0f7c012ac086');
+
+        socket.on('connect', function () {
+            output('<span class="connect-msg">连接成功!</span>');
+        });
+
+        //订阅广播通道
+        socket.on("broadcast", function (message) {
+            var msgObj = JSON.parse(message)
+            notify(msgObj.data);
+        })
+
+        socket.on("message", function (message) {
+            console.log(message)
+            var msgObj = JSON.parse(message)
+            output(msgObj.data)
+            notify(msgObj.data);
+
+        });
+
+        socket.on("error", function (message) {
+            output('<span class="disconnect-msg">' + message + '</span>');
+            notify(message);
+        });
+
+        socket.on('disconnect', function () {
+            output('<span class="disconnect-msg">连接已经关闭!</span>');
+        });
+
+        function sendDisconnect() {
+            socket.disconnect();
+        }
+
+        function sendMessage() {
+            var name = $('#msg').val();
+
+            var req = {jsonrpc: 2.0, id: 10, method: "com.alibaba.dubbo.demo.WebSocketService.sayHello", params: [name]};
+
+            //jsonrpc 规范调用
+            socket.send(JSON.stringify(req));
+        }
+
+        function output(message) {
+            var currentTime = "<span class='time'>" + moment().format('HH:mm:ss.SSS') + "</span>";
+            var element = $("<div>" + currentTime + " " + message + "</div>");
+            $('#console').prepend(element);
+        }
+
+        $(document).keydown(function (e) {
+            if (e.keyCode == 13) {
+                $('#send').click();
+            }
+        });
+
+        function notify(message) {
+            if (Notification && Notification.permission === "granted") {
+                //通知框，与websocket 无关 请忽略
+                var t = moment().format('HH:mm:ss.SSS');
+                var options = {
+                    dir: "ltr",
+                    lang: "utf-8",
+                    icon: "/haimian.jpg",
+                    body: message,
+                };
+                var n = new Notification("WebSocket: " + t, options);
+                n.onshow = function () {
+                    console.log("You got me!");
+                };
+                n.onclick = function () {
+                    alert("You clicked me!");
+                    window.location = "/";
+                };
+                n.onclose = function () {
+                    console.log("notification closed!");
+                };
+                n.onerror = function () {
+                    console.log("An error accured");
+                }
+            }else{
+                alert(message);
+            }
+        }
+
+
+    </script>
+</head>
+
+<body>
+
+<h1>Chat Sample</h1>
+
+<br/>
+
+<div id="console" class="well">
+</div>
+
+<form class="well form-inline" onsubmit="return false;">
+    <input id="msg" class="input-xlarge" type="text" placeholder="Type something..."/>
+    <button type="button" onClick="sendMessage()" class="btn" id="send">Send</button>
+    <button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
+</form>
+
+
+</body>
+
+</html>
