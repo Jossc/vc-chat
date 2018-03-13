@@ -53,12 +53,14 @@
             }
         });
 
-        var socket
+        var socket;
+        var user;
         $(document).ready(function(){
             $.ajax({
                 url: "me",
                 async: false,
                 success: function (response) {
+                    user = response.userAuthentication.details
                     $("#toUserId").val(response.userAuthentication.details.id);
                     console.log(response);
                     $("#username").html("当前登录用户:"+response.principal);
@@ -139,10 +141,10 @@
                 var options = {
                     dir: "ltr",
                     lang: "utf-8",
-                    icon: "/haimian.jpg",
+                    icon: user.avatar,
                     body: message,
                 };
-                var n = new Notification("WebSocket: " + t, options);
+                var n = new Notification(user.nickname +":"+new Date().toDateString(), options);
                 n.onshow = function () {
                     console.log("You got me!");
                 };
