@@ -66,6 +66,7 @@ public class UserDialogueService {
         String sendUniId = DigestUtils.md5Hex((sendId + "_" + recId));
         String recUniId = DigestUtils.md5Hex((recId + "_" + sendId));
 
+
         priMessage.setCreatedTime(currentTime);
 
         UserDialogue sendDialogue = new UserDialogue()

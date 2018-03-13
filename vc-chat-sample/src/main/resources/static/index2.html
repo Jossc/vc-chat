@@ -53,34 +53,45 @@
             }
         });
 
-        var socket = io.connect('http://localhost:1337/?clientType=web&accessToken=3cadca61-809e-40cc-9ccc-0f7c012ac086');
+        var socket
+        $(document).ready(function(){
+            $.ajax({
+                url: "me",
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                    $("#username").html("当前登录用户:"+response.principal);
+                    socket = io.connect('http://localhost:1337/?clientType=web&accessToken=' + response.details.tokenValue);
+                    socket.on('connect', function () {
+                        output('<span class="connect-msg">连接成功!</span>');
+                    });
 
-        socket.on('connect', function () {
-            output('<span class="connect-msg">连接成功!</span>');
+                    //订阅广播通道
+                    socket.on("broadcast", function (message) {
+                        var msgObj = JSON.parse(message)
+                        notify(msgObj.data);
+                    })
+
+                    socket.on("message", function (message) {
+                        console.log(message)
+                        var msgObj = JSON.parse(message)
+                        output(msgObj.data)
+                        notify(msgObj.data);
+                    });
+
+                    socket.on("error", function (message) {
+                        output('<span class="disconnect-msg">' + message + '</span>');
+                        notify(message);
+                    });
+
+                    socket.on('disconnect', function () {
+                        output('<span class="disconnect-msg">连接已经关闭!</span>');
+                    });
+                }
+            });
         });
 
-        //订阅广播通道
-        socket.on("broadcast", function (message) {
-            var msgObj = JSON.parse(message)
-            notify(msgObj.data);
-        })
 
-        socket.on("message", function (message) {
-            console.log(message)
-            var msgObj = JSON.parse(message)
-            output(msgObj.data)
-            notify(msgObj.data);
-
-        });
-
-        socket.on("error", function (message) {
-            output('<span class="disconnect-msg">' + message + '</span>');
-            notify(message);
-        });
-
-        socket.on('disconnect', function () {
-            output('<span class="disconnect-msg">连接已经关闭!</span>');
-        });
 
         function sendDisconnect() {
             socket.disconnect();
@@ -89,10 +100,23 @@
         function sendMessage() {
             var name = $('#msg').val();
 
-            var req = {jsonrpc: 2.0, id: 10, method: "com.alibaba.dubbo.demo.WebSocketService.sayHello", params: [name]};
-
-            //jsonrpc 规范调用
-            socket.send(JSON.stringify(req));
+            var req = {
+                "clientType":"web",
+                "data":"{\"data\":\""+name+"\"}",
+                "eventName":"message",
+                "userId":"1"
+            };
+            $.ajax({
+                type:"post",
+                url: "/chat/push",
+                async: false,
+                data: JSON.stringify(req),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response)
+                }
+            });
         }
 
         function output(message) {
@@ -131,7 +155,7 @@
                 n.onerror = function () {
                     console.log("An error accured");
                 }
-            }else{
+            } else {
                 alert(message);
             }
         }
@@ -142,7 +166,7 @@
 
 <body>
 
-<h1>Chat Sample</h1>
+<h1 id="username"></h1>
 
 <br/>
 

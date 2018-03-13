@@ -40,6 +40,22 @@ docker-compose -f ./docker/docker-compose.yml up -d
 1. [SocketIOExample](./docs/api/SocketIOExample.md)
 
 
+
+### vc-chat-oauth2
+---
+
+1. [OAuth2建表sql](./vc-chat-oauth2/src/main/resources/db/migration/v1__vc_oauth.sql)
+2. [测试用户](./vc-chat-oauth2/src/main/resources/db/migration/user.sql)
+
+
+### vc-chat-sample
+---
+
+#### 推送测试
+
+地址: http://localhost:8080/index2.html
+
+
 ### vc-chat-logic
 ---
 
