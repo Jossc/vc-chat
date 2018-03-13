@@ -1,6 +1,3 @@
-
-SET FOREIGN_KEY_CHECKS=0;
-
 -- ----------------------------
 -- Table structure for authorities
 -- ----------------------------
@@ -10,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `authorities` (
   `authority` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_username` (`username`) USING BTREE
-) ENGINE=InnoDB  ;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for clientdetails
@@ -28,7 +25,8 @@ CREATE TABLE IF NOT EXISTS `clientdetails` (
   `additionalInformation` varchar(4096) DEFAULT NULL,
   `autoApproveScopes` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`appId`)
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- ----------------------------
 -- Table structure for oauth_access_token
@@ -42,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `oauth_access_token` (
   `authentication` text,
   `refresh_token` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`authentication_id`)
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for oauth_approvals
@@ -54,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `oauth_approvals` (
   `status` varchar(10) DEFAULT NULL,
   `expiresAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastModifiedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for oauth_client_details
@@ -72,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `oauth_client_details` (
   `additional_information` varchar(4096) DEFAULT NULL,
   `autoapprove` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for oauth_client_token
@@ -84,24 +82,27 @@ CREATE TABLE IF NOT EXISTS `oauth_client_token` (
   `user_name` varchar(256) DEFAULT NULL,
   `client_id` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`authentication_id`)
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for oauth_code
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `oauth_code` (
+DROP TABLE IF EXISTS `oauth_code`;
+CREATE TABLE `oauth_code` (
   `code` varchar(256) DEFAULT NULL,
   `authentication` text
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for oauth_refresh_token
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `oauth_refresh_token` (
+DROP TABLE IF EXISTS `oauth_refresh_token`;
+CREATE TABLE `oauth_refresh_token` (
   `token_id` varchar(256) DEFAULT NULL,
   `token` text,
   `authentication` text
-) ENGINE=InnoDB ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- ----------------------------
 -- Table structure for users
@@ -110,10 +111,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(64) NOT NULL,
-  `nick_name` varchar(255) DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL,
+  `nickname` varchar(255) DEFAULT NULL,
+  `avatar` text,
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_username` (`username`) USING BTREE
-) ENGINE=InnoDB  ;
-
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
