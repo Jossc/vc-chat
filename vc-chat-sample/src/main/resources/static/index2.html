@@ -59,6 +59,7 @@
                 url: "me",
                 async: false,
                 success: function (response) {
+                    $("#toUserId").val(response.userAuthentication.details.id);
                     console.log(response);
                     $("#username").html("当前登录用户:"+response.principal);
                     socket = io.connect('http://localhost:1337/?clientType=web&accessToken=' + response.details.tokenValue);
@@ -104,7 +105,7 @@
                 "clientType":"web",
                 "data":"{\"data\":\""+name+"\"}",
                 "eventName":"message",
-                "userId":"1"
+                "userId":$("#toUserId").val()
             };
             $.ajax({
                 type:"post",
@@ -174,6 +175,7 @@
 </div>
 
 <form class="well form-inline" onsubmit="return false;">
+    <input id="toUserId" class="input-xlarge" type="text" value="1" placeholder="userId"/>
     <input id="msg" class="input-xlarge" type="text" placeholder="Type something..."/>
     <button type="button" onClick="sendMessage()" class="btn" id="send">Send</button>
     <button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
