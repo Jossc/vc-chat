@@ -143,8 +143,8 @@ public class UserDialogueController implements UserDialogueApi {
      * @param userId 用户id
      * @param dialogueId 对话id
      */
-    public void readMessage(@ApiParam(value = "对话id") @PathVariable(value = "userId") String userId,
-                            @ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId) {
+    public void readMessage(@ApiParam(value = "对话id") @RequestParam(value = "userId") String userId,
+                            @ApiParam(value = "对话id") @RequestParam(value = "dialogueId") Long dialogueId) {
         userDialogueService.readMessage(userId,dialogueId);
     }
 

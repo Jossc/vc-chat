@@ -52,6 +52,7 @@
                 <div class="box box-danger">
                     <div class="box-header with-border">
                         <h3 class="box-title">好友列表</h3>
+                        <span class="label label-danger">未读消息数 {{userUnreadTotal}}</span>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
                                     class="fa fa-minus"></i>
@@ -103,34 +104,34 @@
                         <!-- Conversations are loaded here -->
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
-                            <div ng-repeat="item in priMessageDTOs">
-                                <div class="direct-chat-msg" ng-if="item.priMessage.sendId!=loginUser.userAuthentication.details.id" >
+                            <div ng-repeat="item in priMessageDTO.priMessages">
+                                <div class="direct-chat-msg" ng-if="item.recId==loginUser.userAuthentication.details.id" >
                                     <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-name pull-left">{{item.recUser.username}}</span>
+                                        <span class="direct-chat-name pull-left">{{priMessageDTO.toUser.username}}</span>
                                         <span class="direct-chat-timestamp pull-right">{{item.priMessage.updatedTime}}</span>
                                     </div>
                                     <!-- /.direct-chat-info -->
-                                    <img class="direct-chat-img" ng-src="{{item.recUser.avatar}}"
+                                    <img class="direct-chat-img" ng-src="{{priMessageDTO.toUser.avatar}}"
                                          alt="message user image">
                                     <!-- /.direct-chat-img -->
                                     <div class="direct-chat-text">
-                                        {{item.priMessage.message}}
+                                        {{item.message}}
                                     </div>
                                     <!-- /.direct-chat-text -->
                                 </div>
 
                                 <!-- Message to the right -->
-                                <div class="direct-chat-msg right" ng-if="item.priMessage.sendId==loginUser.userAuthentication.details.id" >
+                                <div class="direct-chat-msg right" ng-if="item.sendId==loginUser.userAuthentication.details.id" >
                                     <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-name pull-right">{{item.recUser.username}}</span>
+                                        <span class="direct-chat-name pull-right">{{priMessageDTO.user.username}}</span>
                                         <span class="direct-chat-timestamp pull-left">{{item.priMessage.updatedTime}}</span>
                                     </div>
                                     <!-- /.direct-chat-info -->
-                                    <img class="direct-chat-img" ng-src="{{item.recUser.avatar}}"
+                                    <img class="direct-chat-img" ng-src="{{priMessageDTO.user.avatar}}"
                                          alt="message user image">
                                     <!-- /.direct-chat-img -->
                                     <div class="direct-chat-text">
-                                        {{item.priMessage.message}}
+                                        {{item.message}}
                                     </div>
                                     <!-- /.direct-chat-text -->
                                 </div>

@@ -5,6 +5,8 @@ import com.vcg.chat.logic.model.PriMessage;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * created by wuyu on 2018/3/14
  */
@@ -12,9 +14,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PriMessageDTO {
 
-    private User sendUser;
+    private User user;
 
-    private User recUser;
+    private User toUser;
 
-    private PriMessage priMessage;
+    private List<PriMessage> priMessages;
 }

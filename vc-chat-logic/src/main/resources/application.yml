@@ -72,5 +72,5 @@ management:
 logging:
   level:
     root: info
-    com.vcg.chat.dao: debug
+    com.vcg.chat.logic.dao: debug
 #  file: ${spring.application.name}.log

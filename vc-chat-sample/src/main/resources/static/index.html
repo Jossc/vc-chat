@@ -306,9 +306,9 @@
             $http.post("/chat/sendMessage", req)
                 .success(function (response) {
                     console.log(response);
-                    $http.get("/chat/listPriMessageByDialogueId/" + $scope.currentToDialogueId)
+                    $http.get("/chat/listPriMessageByDialogueId/" + $scope.currentToDialogueId + "?toUserId=" + $scope.currentToUserId)
                         .success(function (response) {
-                            $scope.priMessageDTOs = response;
+                            $scope.priMessageDTO = response;
                         })
                         .error(function (response) {
                             console.log(response);
@@ -322,26 +322,48 @@
         $scope.changDialogue = function (toUserId, dialogueId) {
             $scope.currentToUserId = toUserId;
             $scope.currentToDialogueId = dialogueId;
-            $http.get("/chat/listPriMessageByDialogueId/" + dialogueId)
+            $http.get("/chat/listPriMessageByDialogueId/" + dialogueId + "?toUserId=" + toUserId)
                 .success(function (response) {
-                    $scope.priMessageDTOs = response;
+                    $scope.priMessageDTO = response;
+                    $scope.readMessage(dialogueId);
                 })
                 .error(function (response) {
                     console.log(response);
                 })
         };
 
+        $scope.readMessage = function (dialogueId) {
+            $http.put("/chat/readMessage/" + dialogueId)
+                .success(function (response) {
+                    console.log(response);
+                })
+                .error(function (response) {
+                    console.log(response);
+                })
+        }
+
         $scope.deleteDialogue = function (dialogueId) {
-          $http.delete("/chat/deleteDialogue/"+dialogueId)
-              .success(function (response) {
-                  $scope.listDialogue();
-              })
-              .error(function (response) {
-                  console.log(response)
-              })
+            $http.delete("/chat/deleteDialogue/" + dialogueId)
+                .success(function (response) {
+                    $scope.listDialogue();
+                })
+                .error(function (response) {
+                    console.log(response)
+                })
+        };
+
+        $scope.getUserUnreadTotal = function (userId) {
+            $http.get("/chat/getUserUnreadTotal/" + userId)
+                .success(function (response) {
+                    $scope.userUnreadTotal = response;
+                })
+                .error(function (response) {
+                    $scope.userUnreadTotal = 0;
+                })
         };
         $scope.onlineUsers();
         $scope.listDialogue();
+        $scope.getUserUnreadTotal($rootScope.loginUser.userAuthentication.details.id);
 
 
     });
