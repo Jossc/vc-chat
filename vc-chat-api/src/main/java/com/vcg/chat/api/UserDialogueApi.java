@@ -74,27 +74,31 @@ public interface UserDialogueApi {
 
     /**
      * @param parentId 父对话id
+     * @param userId   父对话id
      * @param startNum 起始位
      * @param size     取多少条
      * @return
      */
     @ApiOperation(value = "获取对话列表")
-    @GetMapping(value = "listUserDialogueByParentId/{parentId}")
-    List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
+    @GetMapping(value = "listUserDialogueByParentId")
+    List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "用户id") @RequestParam(value = "userId") String userId,
+                                                  @ApiParam(value = "父对话id") @RequestParam(value = "parentId") Long parentId,
                                                   @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                   @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size);
 
     /**
      * 对话消息列表
      *
+     * @param userId     用户id
      * @param dialogueId 对话id
      * @param startNum   起始位
      * @param size       取多少条
      * @return
      */
     @ApiOperation(value = "对话消息列表")
-    @GetMapping(value = "listPriMessageByDialogueId/{dialogueId}")
-    List<PriMessage> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
+    @GetMapping(value = "listPriMessageByDialogueId")
+    List<PriMessage> listPriMessageByDialogueId(@ApiParam(value = "用户id") @RequestParam(value = "userId") String userId,
+                                                @ApiParam(value = "对话id") @RequestParam(value = "dialogueId") Long dialogueId,
                                                 @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                 @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size);
 
@@ -114,27 +118,32 @@ public interface UserDialogueApi {
      * @param dialogueId 对话id
      */
     @ApiOperation(value = "消息置顶")
-    @PutMapping(value = "listUserDialogueByUserId/{dialogueId}")
-    void makeTop(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId);
+    @PutMapping(value = "listUserDialogueByUserId")
+    void makeTop(@ApiParam(value = "对话id") @RequestParam(value = "userId") String userId,
+                 @ApiParam(value = "对话id") @RequestParam(value = "dialogueId") Long dialogueId);
 
     /**
      * 删除对话并删除消息
      *
+     * @param userId     用户id
      * @param dialogueId 对话id
      * @return 删除条数
      */
     @ApiOperation(value = "删除对话并删除消息")
-    @DeleteMapping(value = "deleteDialogue/{dialogueId}")
-    void deleteDialogue(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId);
+    @DeleteMapping(value = "deleteDialogue")
+    void deleteDialogue(@ApiParam(value = "用户id") @RequestParam(value = "userId") String userId,
+                        @ApiParam(value = "对话id") @RequestParam(value = "dialogueId") Long dialogueId);
 
     /**
      * 设置对话已读
      *
+     * @param userId     用户id
      * @param dialogueId 对话id
      */
     @ApiOperation(value = "设置对话已读")
-    @PutMapping(value = "readMessage/{dialogueId}")
-    void readMessage(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId);
+    @PutMapping(value = "readMessage")
+    void readMessage(@ApiParam(value = "用户id") @RequestParam(value = "userId") String userId,
+                     @ApiParam(value = "对话id") @RequestParam(value = "dialogueId") Long dialogueId);
 
     /**
      * 设置所有对话已读

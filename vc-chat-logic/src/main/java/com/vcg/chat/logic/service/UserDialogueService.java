@@ -1,7 +1,5 @@
 package com.vcg.chat.logic.service;
 
-import com.alibaba.fastjson.JSON;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.vcg.chat.api.PushApi;
 import com.vcg.chat.api.model.Request;
 import com.vcg.chat.logic.dao.PriMessageDao;
@@ -18,11 +16,11 @@ import com.vcg.chat.logic.model.query.UserDialogueExample;
 import com.vcg.chat.logic.model.query.UserSystemMessageExample;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.client.utils.CloneUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -196,11 +194,14 @@ public class UserDialogueService {
         priMessage.setDialogueId(recDialogue.getId());
         priMessageDao.insertSelective(priMessage);
         priMessageDao.insertSelective(sendPriMessage);
-        recDialogue.setLastMessage(JSON.toJSONString(priMessage));
-        sendDialogue.setLastMessage(JSON.toJSONString(sendPriMessage));
-        push(recId, recDialogue);
-        push(sendId, sendDialogue);
+        recDialogue.setLastMessage(message);
+        recDialogue.setPriMessage(priMessage);
+        sendDialogue.setLastMessage(message);
+        sendDialogue.setPriMessage(sendPriMessage);
 
+        push(recId, recDialogue);
+        //发件人有可能登录多地，故 发送人也接受同一份消息用于漫游
+        push(sendId, sendDialogue);
     }
 
     /**
@@ -243,7 +244,7 @@ public class UserDialogueService {
                 .peek(u -> {
                     //判断本身是不是父对话,如果是查询本对话的所有子对话的未读数量
                     if (u.getParentMake() != null && u.getParentMake() == 1) {
-                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(u.getId());
+                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(userId, u.getId());
                         u.setUnreadTotal(parentUnreadTotal);
                     }
                 })
@@ -251,24 +252,27 @@ public class UserDialogueService {
     }
 
     /**
+     * @param userId   用户id
      * @param parentId 父对话id
      * @param startNum 起始位
      * @param size     取多少条
      * @return
      */
     @Transactional(readOnly = true)
-    public List<UserDialogue> listUserDialogueByParentId(Long parentId, Integer startNum, Integer size) {
+    public List<UserDialogue> listUserDialogueByParentId(String userId, Long parentId, Integer startNum, Integer size) {
         return userDialogueDao.selectByExample(new UserDialogueExample()
                 .withLimit(startNum, size)
                 .withOrderByClause(UserDialogueExample.ordered + " desc")
                 .addCriteria(
-                        UserDialogueExample.newCriteria().andParentIdEqualTo(parentId)
+                        UserDialogueExample.newCriteria()
+                                .andUserIdEqualTo(userId)
+                                .andParentIdEqualTo(parentId)
                 ))
                 .stream()
                 .peek(u -> {
                     //判断本身是不是父对话,如果是查询本对话的所有子对话的未读数量
                     if (u.getParentMake() != null && u.getParentMake() == 1) {
-                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(u.getId());
+                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(userId,u.getId());
                         u.setUnreadTotal(parentUnreadTotal);
                     }
                 })
@@ -276,13 +280,25 @@ public class UserDialogueService {
     }
 
     /**
+     * @param userId     用户id
      * @param dialogueId 对话id
      * @param startNum   起始位
      * @param size       取多少条
      * @return
      */
     @Transactional(readOnly = true)
-    public List<PriMessage> listPriMessageByDialogueId(Long dialogueId, Integer startNum, Integer size) {
+    public List<PriMessage> listPriMessageByDialogueId(String userId, Long dialogueId, Integer startNum, Integer size) {
+
+        //判断该对话是否属于该用户
+        UserDialogueExample userDialogueExample = new UserDialogueExample()
+                .addCriteria(UserDialogueExample.newCriteria()
+                        .andIdEqualTo(dialogueId)
+                        .andUserIdEqualTo(userId)
+                )
+                .withLimit(1);
+        long count = userDialogueDao.countByExample(userDialogueExample);
+        if (count == 0) return new ArrayList<>();
+
         return priMessageDao.selectByExample(new PriMessageExample()
                 .withLimit(startNum, size)
                 .withOrderByClause(PriMessageExample.id + " desc")
@@ -308,11 +324,12 @@ public class UserDialogueService {
      * 统计父对话的消息数
      *
      * @param parentDialogueId 父对话id
+     * @param userId           用户id
      * @return
      */
     @Transactional(readOnly = true)
-    public Integer sumParentDialogueUnreadTotal(Long parentDialogueId) {
-        return userDialogueDao.sumParentDialogueUnreadTotal(parentDialogueId);
+    public Integer sumParentDialogueUnreadTotal(String userId, Long parentDialogueId) {
+        return userDialogueDao.sumParentDialogueUnreadTotal(userId, parentDialogueId);
     }
 
     /**
@@ -332,25 +349,35 @@ public class UserDialogueService {
      * 删除对话并删除消息
      *
      * @param dialogueId 对话id
+     * @param userId     用户id  防止他人非法删除其他人的对话
      * @return 删除条数
      */
     @Transactional
-    public int deleteDialogue(Long dialogueId) {
+    public int deleteDialogue(String userId, Long dialogueId) {
+        UserDialogueExample userDialogueExample = new UserDialogueExample()
+                .addCriteria(UserDialogueExample.newCriteria()
+                        .andUserIdEqualTo(userId)
+                        .andIdEqualTo(dialogueId)
+                );
+        int deleteCount = userDialogueDao.deleteByExample(userDialogueExample);
+        if (deleteCount == 0) return 0;
         userDialogueDao.deleteByPrimaryKey(dialogueId);
-        PriMessageExample query = new PriMessageExample();
-        query.createCriteria().andDialogueIdEqualTo(dialogueId);
-        return priMessageDao.deleteByExample(query);
+        PriMessageExample priMessageExample = new PriMessageExample();
+        priMessageExample.createCriteria().andDialogueIdEqualTo(dialogueId);
+        return priMessageDao.deleteByExample(priMessageExample);
     }
 
     /**
      * 设置对话已读
      *
      * @param dialogueId 对话id
+     * @param userId     用户id
      */
     @Transactional
-    public void readMessage(Long dialogueId) {
+    public void readMessage(String userId, Long dialogueId) {
         userDialogueDao.updateByPrimaryKeySelective(new UserDialogue()
                 .setId(dialogueId)
+                .setUserId(userId)
                 .setUnreadTotal(0)
         );
     }

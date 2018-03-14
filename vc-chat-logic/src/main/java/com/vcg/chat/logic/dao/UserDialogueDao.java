@@ -24,6 +24,6 @@ public interface UserDialogueDao extends BaseDao<UserDialogue, UserDialogueExamp
      * @param parentId
      * @return
      */
-    Integer sumParentDialogueUnreadTotal(@Param("parentId") Long parentId);
+    Integer sumParentDialogueUnreadTotal(@Param(value = "userId") String userId, @Param("parentId") Long parentId);
 
 }

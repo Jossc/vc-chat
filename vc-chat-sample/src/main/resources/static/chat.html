@@ -69,7 +69,7 @@
                                     <img ng-src="{{item.user.avatar}}" alt="User Image" height="128" width="128">
                                 </a>
                                 <a class="users-list-name" href="javascript:void(0)">{{item.user.username}}</a>
-                                <button class="flat btn btn-danger btn-small">删除</button>
+                                <button class="flat btn btn-danger btn-small" ng-click="deleteDialogue(item.userDialogue.id)">删除</button>
                             </li>
                         </ul>
                         <!-- /.users-list -->

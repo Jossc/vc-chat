@@ -7,7 +7,7 @@
     </select>
 
     <select id="sumParentDialogueUnreadTotal" parameterType="long" resultType="int">
-        select sum(unread_total) from user_dialogue where parent_id = #{parentId} and unread_total>0
+        select sum(unread_total) from user_dialogue where parent_id = #{parentId} and unread_total>0 and user_id=#{userId}
     </select>
 
 </mapper>

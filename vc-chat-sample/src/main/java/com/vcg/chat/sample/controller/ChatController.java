@@ -156,7 +156,7 @@ public class ChatController {
     List<UserDialogue> listUserDialogueByParentId(@ApiParam(value = "父对话id") @PathVariable(value = "parentId") Long parentId,
                                                   @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                   @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return userDialogueApi.listUserDialogueByParentId(parentId, startNum, size);
+        return userDialogueApi.listUserDialogueByParentId(getCurrentUserId(),parentId, startNum, size);
     }
 
     /**
@@ -172,7 +172,7 @@ public class ChatController {
     List<PriMessageDTO> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
                                                 @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                 @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return userDialogueApi.listPriMessageByDialogueId(dialogueId, startNum, size)
+        return userDialogueApi.listPriMessageByDialogueId(getCurrentUserId(),dialogueId, startNum, size)
                 .stream()
                 .map(p -> {
                     User sendUser = userApi.findNicknameAndAvatarAndIdById(Long.valueOf(p.getSendId()));
@@ -205,7 +205,7 @@ public class ChatController {
     @ApiOperation(value = "消息置顶")
     @PutMapping(value = "listUserDialogueByUserId/{dialogueId}")
     void makeTop(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId) {
-        userDialogueApi.makeTop(dialogueId);
+        userDialogueApi.makeTop(getCurrentUserId(),dialogueId);
     }
 
     /**
@@ -217,7 +217,7 @@ public class ChatController {
     @ApiOperation(value = "删除对话并删除消息")
     @DeleteMapping(value = "deleteDialogue/{dialogueId}")
     void deleteDialogue(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId) {
-        userDialogueApi.deleteDialogue(dialogueId);
+        userDialogueApi.deleteDialogue(getCurrentUserId(),dialogueId);
     }
 
     /**
@@ -228,7 +228,7 @@ public class ChatController {
     @ApiOperation(value = "设置对话已读")
     @PutMapping(value = "readMessage/{dialogueId}")
     void readMessage(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId) {
-        userDialogueApi.readMessage(dialogueId);
+        userDialogueApi.readMessage(getCurrentUserId(),dialogueId);
     }
 
     /**

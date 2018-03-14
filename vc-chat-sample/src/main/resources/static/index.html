@@ -205,6 +205,7 @@
 
 <script>
     var app = angular.module("app", ['ngRoute']);
+    var socket;
     app.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/chat.html', {
@@ -225,6 +226,32 @@
             $http.get('/me')
                 .success(function (response, state) {
                     $rootScope.loginUser = response;
+                    if (socket) {
+                        return;
+                    }
+                    socket = io.connect('http://localhost:1337/?accessToken=' + $rootScope.loginUser.details.tokenValue);
+                    socket.on('connect', function () {
+                        console.log("连接成功")
+                    });
+
+                    socket.on("message", function (message) {
+                        console.log(message);
+                        $http.get("/chat/findNicknameAndAvatarAndIdById/" + message.data.toUserId)
+                            .success(function (response) {
+                                console.log(response);
+                                notify(response.username, response.avatar, message.data.lastMessage);
+                            })
+                            .error(function (response) {
+                                console.log(response);
+                            })
+                    });
+
+                    socket.on("error", function (message) {
+                        notify($rootScope.loginUser.userAuthentication.details.username, $rootScope.loginUser.userAuthentication.details.avatar, dialogue.lastMessage);
+                    });
+
+                    socket.on('disconnect', function () {
+                    });
                 })
                 .error(function (response) {
                     console.log(response.message)
@@ -303,31 +330,20 @@
                     console.log(response);
                 })
         };
+
+        $scope.deleteDialogue = function (dialogueId) {
+          $http.delete("/chat/deleteDialogue/"+dialogueId)
+              .success(function (response) {
+                  $scope.listDialogue();
+              })
+              .error(function (response) {
+                  console.log(response)
+              })
+        };
         $scope.onlineUsers();
         $scope.listDialogue();
 
-        socket = io.connect('http://localhost:1337/?accessToken=' + $scope.loginUser.details.tokenValue);
-        socket.on('connect', function () {
-            console.log("连接成功")
-        });
 
-        socket.on("message", function (dialogue) {
-            console.log(dialogue);
-            $http.get("/chat/findNicknameAndAvatarAndIdById/" + dialogue.toUserId)
-                .success(function (response) {
-                    notify(response.username, response.avatar, dialogue.lastMessage);
-                })
-                .error(function (response) {
-                    console.log(response);
-                })
-        });
-
-        socket.on("error", function (message) {
-            notify($scope.loginUser.userAuthentication.details.username, $scope.loginUser.userAuthentication.details.avatar, dialogue.lastMessage);
-        });
-
-        socket.on('disconnect', function () {
-        });
     });
 
 
@@ -349,6 +365,7 @@
                 dir: "ltr",
                 lang: "utf-8",
                 icon: avatar,
+                body: message
             };
             var n = new Notification(username + ":" + new Date().toDateString(), options);
             n.onshow = function () {

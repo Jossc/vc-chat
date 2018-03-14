@@ -67,7 +67,10 @@ public class UserDialogue implements Serializable {
     @ApiModelProperty(value = "0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ")
     private Integer type;
 
-    @ApiModelProperty(value = "最后一条消息")
+    @ApiModelProperty(value = "最后一条消息内容")
     private String lastMessage;
+
+    @ApiModelProperty(value = "最后一条消息")
+    private PriMessage priMessage;
 
 }

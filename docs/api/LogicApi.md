@@ -2,26 +2,26 @@
 
 
 <a name="overview"></a>
-## Overview
+## 概览
 Api Documentation
 
 
-### Version information
-*Version* : 1.0
+### 版本信息
+*版本* : 1.0
 
 
-### License information
-*License* : Apache 2.0  
-*License URL* : http://www.apache.org/licenses/LICENSE-2.0  
-*Terms of service* : urn:tos
+### 许可信息
+*许可证* : Apache 2.0  
+*许可网址* : http://www.apache.org/licenses/LICENSE-2.0  
+*服务条款* : urn:tos
 
 
 ### URI scheme
-*Host* : localhost:8082  
-*BasePath* : /
+*域名* : localhost:8082  
+*基础路径* : /
 
 
-### Tags
+### 标签
 
 * UserDialogue : User Dialogue Controller
 
@@ -29,7 +29,7 @@ Api Documentation
 
 
 <a name="paths"></a>
-## Resources
+## 资源
 
 <a name="userdialogue_resource"></a>
 ### UserDialogue
@@ -43,38 +43,44 @@ POST //api/userDialogue/createDialogue
 ```
 
 
-##### Responses
+##### Body参数
+userDialogue
 
-|HTTP Code|Description|Schema|
+*名称* : userDialogue  
+*标志* : 必填  
+*类型* : [UserDialogue](#userdialogue)
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|[UserDialogue](#userdialogue)|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/createDialogue
 ```
 
 
-##### Example HTTP response
-
-###### Response 200
+###### 请求 body
 ```
 json :
 {
@@ -84,6 +90,51 @@ json :
   "ordered" : 0,
   "parentId" : 0,
   "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
+  "push" : 0,
+  "toUserId" : "string",
+  "type" : 0,
+  "uniId" : "string",
+  "unreadTotal" : 0,
+  "updatedTime" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "createdTime" : "string",
+  "id" : 0,
+  "lastMessage" : "string",
+  "ordered" : 0,
+  "parentId" : 0,
+  "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
   "push" : 0,
   "toUserId" : "string",
   "type" : 0,
@@ -98,42 +149,52 @@ json :
 <a name="deletedialogue"></a>
 #### 删除对话并删除消息
 ```
-DELETE //api/userDialogue/deleteDialogue/{dialogueId}
+DELETE //api/userDialogue/deleteDialogue
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**dialogueId**  <br>*optional*|对话id|integer (int64)|
+|**Query**|**dialogueId**  <br>*可选*|对话id|string|
+|**Query**|**dialogueId**  <br>*可选*|对话id|integer (int64)|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**204**|No Content|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
+|**200**|OK|无内容|
+|**204**|No Content|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
-//api/userDialogue/deleteDialogue/0
+//api/userDialogue/deleteDialogue
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "dialogueId" : 0
+}
 ```
 
 
@@ -144,44 +205,44 @@ GET //api/userDialogue/getDialogue/{dialogueId}
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**dialogueId**  <br>*optional*|对话id|integer (int64)|
+|**Path**|**dialogueId**  <br>*可选*|对话id|integer (int64)|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|[UserDialogue](#userdialogue)|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/getDialogue/0
 ```
 
 
-##### Example HTTP response
+##### HTTP响应示例
 
-###### Response 200
+###### 响应 200
 ```
 json :
 {
@@ -191,6 +252,17 @@ json :
   "ordered" : 0,
   "parentId" : 0,
   "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
   "push" : 0,
   "toUserId" : "string",
   "type" : 0,
@@ -209,44 +281,44 @@ GET //api/userDialogue/getUserUnreadTotal/{userId}
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**userId**  <br>*optional*|用户id|string|
+|**Path**|**userId**  <br>*可选*|用户id|string|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|integer (int32)|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/getUserUnreadTotal/string
 ```
 
 
-##### Example HTTP response
+##### HTTP响应示例
 
-###### Response 200
+###### 响应 200
 ```
 json :
 0
@@ -256,60 +328,63 @@ json :
 <a name="listprimessagebydialogueid"></a>
 #### 对话消息列表
 ```
-GET //api/userDialogue/listPriMessageByDialogueId/{dialogueId}
+GET //api/userDialogue/listPriMessageByDialogueId
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|Default|
+|类型|名称|说明|类型|默认值|
 |---|---|---|---|---|
-|**Path**|**dialogueId**  <br>*optional*|对话id|integer (int64)||
-|**Query**|**size**  <br>*optional*|取多少条|integer (int32)|`10`|
-|**Query**|**startNum**  <br>*optional*|起始位|integer (int32)|`0`|
+|**Query**|**dialogueId**  <br>*可选*|对话id|integer (int64)||
+|**Query**|**size**  <br>*可选*|取多少条|integer (int32)|`10`|
+|**Query**|**startNum**  <br>*可选*|起始位|integer (int32)|`0`|
+|**Query**|**userId**  <br>*可选*|用户id|string||
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|< [PriMessage](#primessage) > array|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
-//api/userDialogue/listPriMessageByDialogueId/0
+//api/userDialogue/listPriMessageByDialogueId
 ```
 
 
-###### Request query
+###### 请求 query
 ```
 json :
 {
+  "dialogueId" : 0,
   "size" : 0,
-  "startNum" : 0
+  "startNum" : 0,
+  "userId" : "string"
 }
 ```
 
 
-##### Example HTTP response
+##### HTTP响应示例
 
-###### Response 200
+###### 响应 200
 ```
 json :
 [ {
@@ -317,6 +392,7 @@ json :
   "dialogueId" : 0,
   "id" : 0,
   "message" : "string",
+  "messageType" : 0,
   "recId" : "string",
   "sendId" : "string",
   "type" : 0,
@@ -328,60 +404,63 @@ json :
 <a name="listuserdialoguebyparentid"></a>
 #### 获取对话列表
 ```
-GET //api/userDialogue/listUserDialogueByParentId/{parentId}
+GET //api/userDialogue/listUserDialogueByParentId
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|Default|
+|类型|名称|说明|类型|默认值|
 |---|---|---|---|---|
-|**Path**|**parentId**  <br>*optional*|父对话id|integer (int64)||
-|**Query**|**size**  <br>*optional*|取多少条|integer (int32)|`10`|
-|**Query**|**startNum**  <br>*optional*|起始位|integer (int32)|`0`|
+|**Query**|**parentId**  <br>*可选*|父对话id|integer (int64)||
+|**Query**|**size**  <br>*可选*|取多少条|integer (int32)|`10`|
+|**Query**|**startNum**  <br>*可选*|起始位|integer (int32)|`0`|
+|**Query**|**userId**  <br>*可选*|用户id|string||
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|< [UserDialogue](#userdialogue) > array|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
-//api/userDialogue/listUserDialogueByParentId/0
+//api/userDialogue/listUserDialogueByParentId
 ```
 
 
-###### Request query
+###### 请求 query
 ```
 json :
 {
+  "parentId" : 0,
   "size" : 0,
-  "startNum" : 0
+  "startNum" : 0,
+  "userId" : "string"
 }
 ```
 
 
-##### Example HTTP response
+##### HTTP响应示例
 
-###### Response 200
+###### 响应 200
 ```
 json :
 [ {
@@ -391,6 +470,17 @@ json :
   "ordered" : 0,
   "parentId" : 0,
   "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
   "push" : 0,
   "toUserId" : "string",
   "type" : 0,
@@ -405,43 +495,54 @@ json :
 <a name="maketop"></a>
 #### 消息置顶
 ```
-PUT //api/userDialogue/listUserDialogueByUserId/{dialogueId}
+PUT //api/userDialogue/listUserDialogueByUserId
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**dialogueId**  <br>*optional*|对话id|integer (int64)|
+|**Query**|**dialogueId**  <br>*可选*|对话id|integer (int64)|
+|**Query**|**userId**  <br>*可选*|对话id|string|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**200**|OK|无内容|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
-//api/userDialogue/listUserDialogueByUserId/0
+//api/userDialogue/listUserDialogueByUserId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "dialogueId" : 0,
+  "userId" : "string"
+}
 ```
 
 
@@ -452,44 +553,44 @@ GET //api/userDialogue/listUserDialogueByUserId/{userId}
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|Default|
+|类型|名称|说明|类型|默认值|
 |---|---|---|---|---|
-|**Path**|**userId**  <br>*optional*|用户id|string||
-|**Query**|**size**  <br>*optional*|取多少条|integer (int32)|`10`|
-|**Query**|**startNum**  <br>*optional*|起始位|integer (int32)|`0`|
+|**Path**|**userId**  <br>*可选*|用户id|string||
+|**Query**|**size**  <br>*可选*|取多少条|integer (int32)|`10`|
+|**Query**|**startNum**  <br>*可选*|起始位|integer (int32)|`0`|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
 |**200**|OK|< [UserDialogue](#userdialogue) > array|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/listUserDialogueByUserId/string
 ```
 
 
-###### Request query
+###### 请求 query
 ```
 json :
 {
@@ -499,9 +600,9 @@ json :
 ```
 
 
-##### Example HTTP response
+##### HTTP响应示例
 
-###### Response 200
+###### 响应 200
 ```
 json :
 [ {
@@ -511,6 +612,17 @@ json :
   "ordered" : 0,
   "parentId" : 0,
   "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
   "push" : 0,
   "toUserId" : "string",
   "type" : 0,
@@ -529,37 +641,37 @@ PUT //api/userDialogue/readAll/{userId}
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**userId**  <br>*optional*|用户id|string|
+|**Path**|**userId**  <br>*可选*|用户id|string|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**200**|OK|无内容|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/readAll/string
 ```
@@ -568,43 +680,44 @@ PUT //api/userDialogue/readAll/{userId}
 <a name="readmessage"></a>
 #### 设置对话已读
 ```
-PUT //api/userDialogue/readMessage/{dialogueId}
+PUT //api/userDialogue/readMessage
 ```
 
 
-##### Parameters
+##### 参数
 
-|Type|Name|Description|Schema|
+|类型|名称|说明|类型|
 |---|---|---|---|
-|**Path**|**dialogueId**  <br>*optional*|对话id|integer (int64)|
+|**Path**|**dialogueId**  <br>*可选*|对话id|integer (int64)|
+|**Path**|**userId**  <br>*可选*|对话id|string|
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**200**|OK|无内容|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
-//api/userDialogue/readMessage/0
+//api/userDialogue/readMessage
 ```
 
 
@@ -615,44 +728,44 @@ POST //api/userDialogue/sendMessage
 ```
 
 
-##### Body parameter
+##### Body参数
 priMessage
 
-*Name* : priMessage  
-*Flags* : required  
-*Type* : [PriMessage](#primessage)
+*名称* : priMessage  
+*标志* : 必填  
+*类型* : [PriMessage](#primessage)
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**200**|OK|无内容|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/sendMessage
 ```
 
 
-###### Request body
+###### 请求 body
 ```
 json :
 {
@@ -660,6 +773,7 @@ json :
   "dialogueId" : 0,
   "id" : 0,
   "message" : "string",
+  "messageType" : 0,
   "recId" : "string",
   "sendId" : "string",
   "type" : 0,
@@ -675,44 +789,44 @@ PUT //api/userDialogue/updateDialogue
 ```
 
 
-##### Body parameter
+##### Body参数
 userDialogue
 
-*Name* : userDialogue  
-*Flags* : required  
-*Type* : [UserDialogue](#userdialogue)
+*名称* : userDialogue  
+*标志* : 必填  
+*类型* : [UserDialogue](#userdialogue)
 
 
-##### Responses
+##### 响应
 
-|HTTP Code|Description|Schema|
+|HTTP代码|说明|类型|
 |---|---|---|
-|**200**|OK|No Content|
-|**201**|Created|No Content|
-|**401**|Unauthorized|No Content|
-|**403**|Forbidden|No Content|
-|**404**|Not Found|No Content|
+|**200**|OK|无内容|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
 
 
-##### Consumes
+##### 请求类型
 
 * `application/json`
 
 
-##### Produces
+##### 响应类型
 
 * `*/*`
 
 
-##### Example HTTP request
+##### HTTP请求示例
 
-###### Request path
+###### 请求 path
 ```
 //api/userDialogue/updateDialogue
 ```
 
 
-###### Request body
+###### 请求 body
 ```
 json :
 {
@@ -722,6 +836,17 @@ json :
   "ordered" : 0,
   "parentId" : 0,
   "parentMake" : 0,
+  "priMessage" : {
+    "createdTime" : "string",
+    "dialogueId" : 0,
+    "id" : 0,
+    "message" : "string",
+    "messageType" : 0,
+    "recId" : "string",
+    "sendId" : "string",
+    "type" : 0,
+    "uniId" : "string"
+  },
   "push" : 0,
   "toUserId" : "string",
   "type" : 0,
@@ -736,42 +861,40 @@ json :
 
 
 <a name="definitions"></a>
-## Definitions
+## 定义
 
 <a name="primessage"></a>
 ### PriMessage
 
-|Name|Description|Schema|
+|名称|说明|类型|
 |---|---|---|
-|**createdTime**  <br>*optional*|创建时间  <br>**Example** : `"string"`|string (date-time)|
-|**dialogueId**  <br>*optional*|对话id  <br>**Example** : `0`|integer (int64)|
-|**id**  <br>*optional*|id  <br>**Example** : `0`|integer (int64)|
-|**message**  <br>*optional*|消息内容  <br>**Example** : `"string"`|string|
-|**recId**  <br>*optional*|收件人id  <br>**Example** : `"string"`|string|
-|**sendId**  <br>*optional*|发件人id  <br>**Example** : `"string"`|string|
-|**type**  <br>*optional*|0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动  <br>**Example** : `0`|integer (int32)|
-|**uniId**  <br>*optional*|uniId  <br>**Example** : `"string"`|string|
+|**createdTime**  <br>*可选*|创建时间  <br>**样例** : `"string"`|string (date-time)|
+|**dialogueId**  <br>*可选*|对话id  <br>**样例** : `0`|integer (int64)|
+|**id**  <br>*可选*|id  <br>**样例** : `0`|integer (int64)|
+|**message**  <br>*可选*|消息内容  <br>**样例** : `"string"`|string|
+|**messageType**  <br>*可选*|0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息  <br>**样例** : `0`|integer (int32)|
+|**recId**  <br>*可选*|收件人id  <br>**样例** : `"string"`|string|
+|**sendId**  <br>*可选*|发件人id  <br>**样例** : `"string"`|string|
+|**type**  <br>*可选*|0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动  <br>**样例** : `0`|integer (int32)|
+|**uniId**  <br>*可选*|uniId  <br>**样例** : `"string"`|string|
 
 
 <a name="userdialogue"></a>
 ### UserDialogue
 
-|Name|Description|Schema|
+|名称|说明|类型|
 |---|---|---|
-|**createdTime**  <br>*optional*|createdTime  <br>**Example** : `"string"`|string (date-time)|
-|**id**  <br>*optional*|id  <br>**Example** : `0`|integer (int64)|
-|**lastMessage**  <br>*optional*|最后一条消息  <br>**Example** : `"string"`|string|
-|**ordered**  <br>*optional*|排序字段  <br>**Example** : `0`|integer (int64)|
-|**parentId**  <br>*optional*|父对话id  <br>**Example** : `0`|integer (int64)|
-|**parentMake**  <br>*optional*|父字段标识位 0 不是 1 是  <br>**Example** : `0`|integer (int32)|
-|**push**  <br>*optional*|0.正常全部接收 1.只接收不弹出 2.不接收不弹出  <br>**Example** : `0`|integer (int32)|
-|**toUserId**  <br>*optional*|该字段为 冗余字段，用于记录对方id，方便用于查找头像  <br>**Example** : `"string"`|string|
-|**type**  <br>*optional*|0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动  <br>**Example** : `0`|integer (int32)|
-|**uniId**  <br>*optional*|使用双方id md5 加密 生成唯一id  <br>**Example** : `"string"`|string|
-|**unreadTotal**  <br>*optional*|未读消息数  <br>**Example** : `0`|integer (int32)|
-|**updatedTime**  <br>*optional*|对话更新时间,会随新来的消息进行时间更新  <br>**Example** : `"string"`|string (date-time)|
-|**userId**  <br>*optional*|userId  <br>**Example** : `"string"`|string|
-
-
-
-
+|**createdTime**  <br>*可选*|createdTime  <br>**样例** : `"string"`|string (date-time)|
+|**id**  <br>*可选*|id  <br>**样例** : `0`|integer (int64)|
+|**lastMessage**  <br>*可选*|最后一条消息内容  <br>**样例** : `"string"`|string|
+|**ordered**  <br>*可选*|排序字段  <br>**样例** : `0`|integer (int64)|
+|**parentId**  <br>*可选*|父对话id  <br>**样例** : `0`|integer (int64)|
+|**parentMake**  <br>*可选*|父字段标识位 0 不是 1 是  <br>**样例** : `0`|integer (int32)|
+|**priMessage**  <br>*可选*|最后一条消息  <br>**样例** : `"[primessage](#primessage)"`|[PriMessage](#primessage)|
+|**push**  <br>*可选*|0.正常全部接收 1.只接收不弹出 2.不接收不弹出  <br>**样例** : `0`|integer (int32)|
+|**toUserId**  <br>*可选*|该字段为 冗余字段，用于记录对方id，方便用于查找头像  <br>**样例** : `"string"`|string|
+|**type**  <br>*可选*|0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动  <br>**样例** : `0`|integer (int32)|
+|**uniId**  <br>*可选*|使用双方id md5 加密 生成唯一id  <br>**样例** : `"string"`|string|
+|**unreadTotal**  <br>*可选*|未读消息数  <br>**样例** : `0`|integer (int32)|
+|**updatedTime**  <br>*可选*|对话更新时间,会随新来的消息进行时间更新  <br>**样例** : `"string"`|string (date-time)|
+|**userId**  <br>*可选*|userId  <br>**样例** : `"string"`|string|

@@ -124,7 +124,7 @@ public class HttpPushService implements PushService {
 
         SocketIOClient client = router.getSocketIOClient();
         if (client.isChannelOpen()) {
-            client.sendEvent(request.getEventName(), new RetryVoidAckCallback(this.amqpTemplate, request), request.getData());
+            client.sendEvent(request.getEventName(), new RetryVoidAckCallback(this.amqpTemplate, request), request);
         } else {
             localRouterManager.unRegister(request.getUserId(), request.getSessionId());
         }
