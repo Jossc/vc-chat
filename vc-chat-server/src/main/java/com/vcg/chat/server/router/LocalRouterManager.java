@@ -2,10 +2,7 @@ package com.vcg.chat.server.router;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -45,12 +42,13 @@ public final class LocalRouterManager implements RouterManager<LocalRouter> {
     }
 
     @Override
-    public Set<LocalRouter> lookupAll() {
-        return this.routers.values()
-                .parallelStream()
-                .flatMap(m -> m.entrySet().stream())
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toSet());
+    public Set<String> onlineUsers() {
+        return new HashSet<>(routers.keySet());
+    }
+
+    @Override
+    public Map<String, Map<String, LocalRouter>> lookupAll() {
+        return Collections.unmodifiableMap(routers);
     }
 
 

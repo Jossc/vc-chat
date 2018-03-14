@@ -57,7 +57,7 @@ public class LoginConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/user/company", "/css/**", "/style/**", "/images/**", "/js/**", "/favicon.ico", "/webjars/**", "/user/company", "/index.html", "/login", "/login.html", "/me");
+                .antMatchers("/user/company","/user/findNicknameAndAvatarAndIdById/**", "/css/**", "/style/**", "/images/**", "/js/**", "/favicon.ico", "/webjars/**", "/user/company", "/index.html", "/login", "/login.html", "/me");
     }
 
     @Override

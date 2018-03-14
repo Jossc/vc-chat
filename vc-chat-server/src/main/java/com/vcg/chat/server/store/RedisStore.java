@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * created by wuyu on 2016/3/1
@@ -78,6 +79,11 @@ public class RedisStore implements Store {
         }
 
         return map;
+    }
+
+    @Override
+    public Set<String> keys(String prefix) {
+        return stringRedisTemplate.keys(prefix);
     }
 
 

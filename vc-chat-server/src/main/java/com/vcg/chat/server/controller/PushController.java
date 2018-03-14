@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+
 /**
  * created by wuyu on 2018/2/27
  */
@@ -31,6 +33,11 @@ public class PushController implements PushApi {
     @ApiOperation(value = "多链路推送", notes = "需要用户id进行推送")
     public void multiPush(@Validated @RequestBody Request request) {
         pushService.multiPush(request);
+    }
+
+    @ApiOperation(value = "在线用户")
+    public Set<String> onlineUsers() {
+        return pushService.onlineUsers();
     }
 
 //    @ApiOperation(value = "多链路推送", notes = "需要用户id进行推送")

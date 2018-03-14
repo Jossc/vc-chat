@@ -9,12 +9,13 @@ import java.util.Date;
 
 
 /**
- * Created on 2018/3/05 12:31.
- * <p>
+ * Created on 2018/3/14 10:45.
+ *
  * id 	BIGINT 	19
  * sendId 	VARCHAR 	64 	发件人id
  * recId 	VARCHAR 	64 	收件人id
  * type 	INTEGER 	10 	0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动
+ * messageType 	INTEGER 	10 	0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息
  * createdTime 	TIMESTAMP 	19 	创建时间
  * dialogueId 	BIGINT 	19 	对话id
  * uniId 	VARCHAR 	32
@@ -36,6 +37,9 @@ public class PriMessage implements Serializable {
 
     @ApiModelProperty(value = "0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ")
     private Integer type;
+
+    @ApiModelProperty(value = "0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息")
+    private Integer messageType;
 
     @ApiModelProperty(value = "创建时间")
     private Date createdTime;

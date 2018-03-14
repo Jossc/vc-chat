@@ -1,6 +1,7 @@
 package com.vcg.chat.server.router;
 
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -41,10 +42,19 @@ public interface RouterManager<R extends Router> {
      */
     R lookup(String userId, String sessionId);
 
+
     /**
-     * 查询所有路由
+     * 在线用户
+     *
      * @return
      */
-    Set<R> lookupAll();
+    Set<String> onlineUsers();
+
+    /**
+     * 查询所有路由
+     *
+     * @return
+     */
+    Map<String, Map<String, R>> lookupAll();
 
 }

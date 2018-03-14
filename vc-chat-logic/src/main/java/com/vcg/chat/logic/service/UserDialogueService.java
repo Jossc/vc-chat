@@ -1,5 +1,7 @@
 package com.vcg.chat.logic.service;
 
+import com.alibaba.fastjson.JSON;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.vcg.chat.api.PushApi;
 import com.vcg.chat.api.model.Request;
 import com.vcg.chat.logic.dao.PriMessageDao;
@@ -16,6 +18,7 @@ import com.vcg.chat.logic.model.query.UserDialogueExample;
 import com.vcg.chat.logic.model.query.UserSystemMessageExample;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.client.utils.CloneUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +60,10 @@ public class UserDialogueService {
         String sendId = priMessage.getSendId();
         String recId = priMessage.getRecId();
 
+        if (priMessage.getType() == null) {
+            priMessage.setType(0);
+        }
+
         //创建时间
         Date currentTime = new Date();
         String message = priMessage.getMessage();
@@ -65,36 +72,132 @@ public class UserDialogueService {
         //双方产生唯一id
         String sendUniId = DigestUtils.md5Hex((sendId + "_" + recId));
         String recUniId = DigestUtils.md5Hex((recId + "_" + sendId));
-
-
         priMessage.setCreatedTime(currentTime);
 
-        UserDialogue sendDialogue = new UserDialogue()
-                .setUserId(sendId)
-                .setToUserId(recId)
-                .setLastMessage(message)
-                .setOrdered(currentTime.getTime())
-                .setUniId(sendUniId)
-                .setUpdatedTime(currentTime)
-                .setCreatedTime(currentTime)
-                .setType(type);
+        //查询发送人是否已经产生了对话
+        List<UserDialogue> sendDialogues = userDialogueDao.selectByExample(new UserDialogueExample()
+                .addCriteria(UserDialogueExample
+                        .newCriteria()
+                        .andUniIdEqualTo(sendUniId)
+                ));
 
-        //接收人对话
-        UserDialogue recDialogue = new UserDialogue()
-                .setUserId(recId)
-                .setToUserId(sendId)
-                .setLastMessage(message)
-                .setOrdered(currentTime.getTime())
-                .setUnreadTotal(1)
-                .setUniId(recUniId)
-                .setUpdatedTime(currentTime)
-                .setCreatedTime(currentTime)
-                .setType(type);
+        //查询接收人是否已经产生了对话
+        List<UserDialogue> recDialogues = userDialogueDao.selectByExample(new UserDialogueExample()
+                .addCriteria(UserDialogueExample
+                        .newCriteria()
+                        .andUniIdEqualTo(recUniId)
+                ));
 
-        priMessageDao.upsertSeletive(priMessage);
-        userDialogueDao.upsertSeletive(sendDialogue);
-        userDialogueDao.upsertSeletive(recDialogue);
 
+        //如果已经存在对话,将更新对话
+        UserDialogue sendDialogue;
+        if (sendDialogues.size() > 0) {
+            sendDialogue = sendDialogues.get(0);
+            sendDialogue.setUserId(sendId)
+                    .setToUserId(recId)
+                    .setLastMessage(message)
+                    .setUniId(sendUniId)
+                    .setUpdatedTime(currentTime)
+                    .setCreatedTime(currentTime)
+                    .setType(type);
+
+            //判断是否对话是否置顶,如果未置顶将更新ordered排序
+            if (currentTime.getTime() * 2 > sendDialogue.getOrdered()) {
+                sendDialogue.setOrdered(currentTime.getTime());
+            }
+
+
+            userDialogueDao.updateByPrimaryKeySelective(sendDialogue);
+        } else {
+            sendDialogue = new UserDialogue()
+                    .setUserId(sendId)
+                    .setToUserId(recId)
+                    .setLastMessage(message)
+                    .setOrdered(currentTime.getTime())
+                    .setUniId(sendUniId)
+                    .setUpdatedTime(currentTime)
+                    .setCreatedTime(currentTime)
+                    .setType(type);
+            userDialogueDao.insertSelective(sendDialogue);
+        }
+
+        UserDialogue recDialogue;
+        //如果已经存在对话,将更新对话
+        if (recDialogues.size() > 0) {
+            recDialogue = recDialogues.get(0);
+            recDialogue.setUnreadTotal(recDialogue.getUnreadTotal() + 1)
+                    .setUserId(recId)
+                    .setParentId(0L)
+                    .setToUserId(sendId)
+                    .setLastMessage(message)
+                    .setOrdered(currentTime.getTime())
+                    .setUniId(recUniId)
+                    .setUpdatedTime(currentTime)
+                    .setCreatedTime(currentTime)
+                    .setType(type);
+
+            //判断是否对话是否置顶,如果未置顶将更新ordered排序
+            if (currentTime.getTime() * 2 > recDialogue.getOrdered()) {
+                recDialogue.setOrdered(currentTime.getTime());
+            }
+
+            userDialogueDao.updateByPrimaryKeySelective(recDialogue);
+        } else {
+            recDialogue = new UserDialogue()
+                    .setUserId(recId)
+                    .setParentId(0L)
+                    .setToUserId(sendId)
+                    .setLastMessage(message)
+                    .setOrdered(currentTime.getTime())
+                    .setUnreadTotal(1)
+                    .setUniId(recUniId)
+                    .setUpdatedTime(currentTime)
+                    .setCreatedTime(currentTime)
+                    .setType(type);
+            userDialogueDao.insertSelective(recDialogue);
+        }
+
+
+        //更新父对话最后一条消息、时间以及排序
+        Long sendDialogueParentId = sendDialogue.getParentId();
+        if (sendDialogueParentId != null && sendDialogueParentId != 0) {
+            UserDialogue sendParentDialogue = userDialogueDao.selectByPrimaryKey(sendDialogueParentId);
+            sendParentDialogue.setLastMessage(message)
+                    .setUpdatedTime(currentTime);
+
+            //判断是否对话是否置顶,如果未置顶将更新ordered排序
+            if (currentTime.getTime() * 2 > sendParentDialogue.getOrdered()) {
+                sendParentDialogue.setOrdered(currentTime.getTime());
+            }
+            userDialogueDao.updateByPrimaryKeySelective(sendParentDialogue);
+        }
+
+        //更新父对话最后一条消息、时间以及排序
+        Long recDialogueParentId = recDialogue.getParentId();
+        if (recDialogueParentId != null && recDialogueParentId != 0) {
+            UserDialogue recParentDialogue = userDialogueDao.selectByPrimaryKey(recDialogueParentId);
+            recParentDialogue.setLastMessage(message)
+                    .setUpdatedTime(currentTime);
+
+            //判断是否对话是否置顶,如果未置顶将更新ordered排序
+            if (currentTime.getTime() * 2 > recParentDialogue.getOrdered()) {
+                recParentDialogue.setOrdered(currentTime.getTime());
+            }
+            userDialogueDao.updateByPrimaryKeySelective(recParentDialogue);
+        }
+
+        PriMessage sendPriMessage = new PriMessage()
+                .setMessage(priMessage.getMessage())
+                .setType(priMessage.getType())
+                .setSendId(priMessage.getSendId())
+                .setRecId(priMessage.getRecId())
+                .setCreatedTime(priMessage.getCreatedTime())
+                .setDialogueId(sendDialogue.getId());
+        priMessage.setDialogueId(recDialogue.getId());
+        priMessageDao.insertSelective(priMessage);
+        priMessageDao.insertSelective(sendPriMessage);
+        recDialogue.setLastMessage(JSON.toJSONString(priMessage));
+        sendDialogue.setLastMessage(JSON.toJSONString(sendPriMessage));
         push(recId, recDialogue);
         push(sendId, sendDialogue);
 
@@ -277,12 +380,13 @@ public class UserDialogueService {
     public UserDialogue createDialogue(UserDialogue userDialogue) {
         String userId = userDialogue.getUserId();
         String toUserId = userDialogue.getToUserId();
-        String uniId = DigestUtils.md5Hex((userId + ":" + toUserId));
+        String uniId = DigestUtils.md5Hex((userId + "_" + toUserId));
         Date createdTime = new Date();
         userDialogue.setCreatedTime(createdTime)
                 .setUniId(uniId)
+                .setOrdered(System.currentTimeMillis())
                 .setUnreadTotal(0);
-        userDialogueDao.upsertSeletive(userDialogue);
+        userDialogueDao.insertSelective(userDialogue);
         return userDialogue;
     }
 

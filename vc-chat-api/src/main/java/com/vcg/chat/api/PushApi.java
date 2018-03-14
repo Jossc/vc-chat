@@ -5,8 +5,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Set;
 
 /**
  * created by wuyu on 2018/3/1
@@ -47,5 +50,9 @@ public interface PushApi {
 //    @ApiOperation(value = "多线路推送")
 //    @PostMapping(value = "mqPush")
 //    void mqPush(@Validated @RequestBody Request request);
+
+    @ApiOperation(value = "查询所有连接的用户")
+    @GetMapping(value = "lookupAllUser")
+    Set<String> onlineUsers();
 
 }

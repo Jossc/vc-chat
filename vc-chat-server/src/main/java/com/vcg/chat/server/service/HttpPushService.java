@@ -19,6 +19,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.AsyncRestTemplate;
 
 import java.net.URI;
+import java.util.Set;
 
 /**
  * created by wuyu on 2018/3/1
@@ -74,6 +75,11 @@ public class HttpPushService implements PushService {
         remoteRouterManager.lookupAll(request.getUserId())
                 .parallelStream()
                 .forEach(r -> push(r, request));
+    }
+
+    @Override
+    public Set<String> onlineUsers() {
+        return remoteRouterManager.onlineUsers();
     }
 
 

@@ -3,6 +3,7 @@
 package com.vcg.chat.server.store;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface Store {
 
@@ -16,6 +17,7 @@ public interface Store {
 
     <T> T get(String key, Class<T> tClass);
 
+
     void hset(String key, String field, String value);
 
     <T> T hget(String key, String field, Class<T> tClass);
@@ -24,4 +26,5 @@ public interface Store {
 
     <T> Map<String, T> hgetAll(String key, Class<T> clazz);
 
+    Set<String> keys(String prefix);
 }

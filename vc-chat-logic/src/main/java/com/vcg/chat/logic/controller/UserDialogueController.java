@@ -40,7 +40,7 @@ public class UserDialogueController implements UserDialogueApi {
      * @return
      */
     @Override
-    public UserDialogue createDialogue(UserDialogue userDialogue) {
+    public UserDialogue createDialogue(@RequestBody UserDialogue userDialogue) {
         return userDialogueService.createDialogue(userDialogue);
     }
 

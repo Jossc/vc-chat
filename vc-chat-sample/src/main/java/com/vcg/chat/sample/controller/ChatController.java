@@ -1,18 +1,27 @@
 package com.vcg.chat.sample.controller;
 
 import com.vcg.chat.api.PushApi;
+import com.vcg.chat.api.UserApi;
 import com.vcg.chat.api.UserDialogueApi;
 import com.vcg.chat.api.model.Request;
+import com.vcg.chat.api.model.User;
 import com.vcg.chat.logic.model.PriMessage;
 import com.vcg.chat.logic.model.UserDialogue;
+import com.vcg.chat.sample.model.PriMessageDTO;
+import com.vcg.chat.sample.model.UserDialogueDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * created by wuyu on 2018/3/13
@@ -26,6 +35,31 @@ public class ChatController {
 
     @Autowired
     private PushApi pushApi;
+
+    @Autowired
+    private UserApi userApi;
+
+
+    /**
+     * 在线用户
+     *
+     * @return List<User> 所有在线用户
+     */
+    @GetMapping(value = "onlineUsers")
+    public List<User> onlineUsers() {
+        return pushApi.onlineUsers()
+                .stream()
+                .map(k -> userApi.findNicknameAndAvatarAndIdById(Long.valueOf(k)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 查询用户头像，昵称
+     */
+    @GetMapping(value = "findNicknameAndAvatarAndIdById/{id}")
+    public User findNicknameAndAvatarAndIdById(@PathVariable(value = "id")Long id){
+        return userApi.findNicknameAndAvatarAndIdById(id);
+    }
 
 
     /**
@@ -44,6 +78,9 @@ public class ChatController {
     @ApiOperation(value = "发送消息")
     @PostMapping(value = "sendMessage")
     void sendMessage(@RequestBody PriMessage priMessage) {
+        //当前登陆用户
+        String userId = getCurrentUserId();
+        priMessage.setSendId(userId);
         userDialogueApi.sendMessage(priMessage);
     }
 
@@ -55,6 +92,7 @@ public class ChatController {
     @ApiOperation(value = "创建对话")
     @PostMapping(value = "createDialogue")
     UserDialogue createDialogue(@RequestBody UserDialogue userDialogue) {
+        userDialogue.setUserId(getCurrentUserId());
         return userDialogueApi.createDialogue(userDialogue);
     }
 
@@ -86,17 +124,25 @@ public class ChatController {
     /**
      * 获取对话列表
      *
-     * @param userId   用户id
      * @param startNum 起始位
      * @param size     取多少条
      * @return
      */
     @ApiOperation(value = "获取对话列表")
-    @GetMapping(value = "listUserDialogueByUserId/{userId}")
-    List<UserDialogue> listUserDialogueByUserId(@ApiParam(value = "用户id") @PathVariable(value = "userId") String userId,
-                                                @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                                @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return userDialogueApi.listUserDialogueByUserId(userId, startNum, size);
+    @GetMapping(value = "listUserDialogueByUserId")
+    List<UserDialogueDTO> listUserDialogueByUserId(@ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                                   @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        //当前登陆用户
+        String userId = getCurrentUserId();
+        return userDialogueApi.listUserDialogueByUserId(userId, startNum, size)
+                .stream()
+                .map(u -> {
+                    User user = userApi.findNicknameAndAvatarAndIdById(Long.valueOf(u.getToUserId()));
+                    return new UserDialogueDTO()
+                            .setUser(user)
+                            .setUserDialogue(u);
+                }).collect(Collectors.toList());
     }
 
     /**
@@ -123,10 +169,20 @@ public class ChatController {
      */
     @ApiOperation(value = "对话消息列表")
     @GetMapping(value = "listPriMessageByDialogueId/{dialogueId}")
-    List<PriMessage> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
+    List<PriMessageDTO> listPriMessageByDialogueId(@ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
                                                 @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
                                                 @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return userDialogueApi.listPriMessageByDialogueId(dialogueId, startNum, size);
+        return userDialogueApi.listPriMessageByDialogueId(dialogueId, startNum, size)
+                .stream()
+                .map(p -> {
+                    User sendUser = userApi.findNicknameAndAvatarAndIdById(Long.valueOf(p.getSendId()));
+                    User recUser = userApi.findNicknameAndAvatarAndIdById(Long.valueOf(p.getRecId()));
+                    return new PriMessageDTO()
+                            .setSendUser(sendUser)
+                            .setRecUser(recUser)
+                            .setPriMessage(p);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -185,5 +241,24 @@ public class ChatController {
     @PutMapping(value = "readAll/{userId}")
     void readAll(@ApiParam(value = "用户id") @PathVariable(value = "userId") String userId) {
         userDialogueApi.readAll(userId);
+    }
+
+    public static String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            if (authentication instanceof OAuth2Authentication) {
+                OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+                Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+                if (userAuthentication != null) {
+                    Object details = userAuthentication.getDetails();
+                    if (details != null && details instanceof Map) {
+                        Map<String, Object> m = (Map<String, Object>) details;
+                        return m.get("id").toString();
+
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

@@ -16,6 +16,8 @@ public class PriMessageExample extends BaseExample<PriMessageExample,PriMessageE
 
 	public static final String type = "type";
 
+	public static final String messageType = "message_type";
+
 	public static final String createdTime = "created_time";
 
 	public static final String dialogueId = "dialogue_id";
@@ -43,6 +45,11 @@ public class PriMessageExample extends BaseExample<PriMessageExample,PriMessageE
 
 		 public Columns andType() {
 			add(type);
+			return this;
+		}
+
+		 public Columns andMessageType() {
+			add(messageType);
 			return this;
 		}
 
@@ -81,7 +88,7 @@ public class PriMessageExample extends BaseExample<PriMessageExample,PriMessageE
     }
 
 
-	private static final long serialVersionUID = 2826556048276847623L;
+	private static final long serialVersionUID = 8713179172290687215L;
 
     protected String orderByClause;
 
@@ -144,7 +151,7 @@ public class PriMessageExample extends BaseExample<PriMessageExample,PriMessageE
 
 protected abstract static class GeneratedCriteria implements Serializable {
 
-	private static final long serialVersionUID = 3128754750265755741L;
+	private static final long serialVersionUID = 2039298973487903194L;
 
         protected List<Criterion> criteria;
 
@@ -446,6 +453,66 @@ protected abstract static class GeneratedCriteria implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andMessageTypeIsNull() {
+            addCriterion("message_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeIsNotNull() {
+            addCriterion("message_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeEqualTo(Integer value) {
+            addCriterion("message_type =", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeNotEqualTo(Integer value) {
+            addCriterion("message_type <>", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeGreaterThan(Integer value) {
+            addCriterion("message_type >", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("message_type >=", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeLessThan(Integer value) {
+            addCriterion("message_type <", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("message_type <=", value, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeIn(List<Integer> values) {
+            addCriterion("message_type in", values, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeNotIn(List<Integer> values) {
+            addCriterion("message_type not in", values, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeBetween(Integer value1, Integer value2) {
+            addCriterion("message_type between", value1, value2, "messageType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMessageTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("message_type not between", value1, value2, "messageType");
+            return (Criteria) this;
+        }
+
         public Criteria andCreatedTimeIsNull() {
             addCriterion("created_time is null");
             return (Criteria) this;
@@ -709,7 +776,7 @@ protected abstract static class GeneratedCriteria implements Serializable {
 
 public static class Criteria extends GeneratedCriteria implements Serializable {
 
-	private static final long serialVersionUID = 3962952677167757337L;
+	private static final long serialVersionUID = 8544268397364417498L;
 
 
         protected Criteria() {
@@ -719,7 +786,7 @@ public static class Criteria extends GeneratedCriteria implements Serializable {
 
 public static class Criterion implements Serializable {
 
-	private static final long serialVersionUID = 7031725614131667625L;
+	private static final long serialVersionUID = 3558698848162139487L;
 
         private String condition;
 

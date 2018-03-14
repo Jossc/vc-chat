@@ -2,6 +2,7 @@ package com.vcg.chat.oauth2.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.vcg.chat.oauth2.model.User;
+import com.vcg.chat.oauth2.service.UserService;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +14,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,9 +32,17 @@ public class UserController {
     @Autowired
     private ClientDetailsService clientDetailsService;
 
-
     @Autowired
     private DefaultTokenServices tokenServices;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping(value = "/user/findNicknameAndAvatarAndIdById/{id}")
+    @ResponseBody
+    public User findNicknameAndAvatarAndIdById(@PathVariable(value = "id") Long id) {
+        return userService.findNicknameAndAvatarAndIdById(id);
+    }
 
     @GetMapping(value = "/user")
     @ResponseBody

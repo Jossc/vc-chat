@@ -1,6 +1,10 @@
 package com.vcg.chat.server.service;
 
 import com.vcg.chat.api.model.Request;
+import com.vcg.chat.api.model.User;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * created by wuyu on 2018/3/3
@@ -20,4 +24,11 @@ public interface PushService {
      * @param request
      */
     void multiPush(Request request);
+
+    /**
+     * 查询所有连接的用户
+     * @return 用户列表
+     */
+    Set<String> onlineUsers();
+
 }

@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS `pri_message` (
   `send_id` varchar(64) NOT NULL COMMENT '发件人id',
   `rec_id` varchar(64) NOT NULL COMMENT '收件人id',
   `message` text COMMENT '消息内容',
-  `type` int(1) NOT NULL COMMENT '0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ',
+  `type` int(1) NOT NULL DEFAULT '0' COMMENT '0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ',
+  `message_type` int(1) DEFAULT '0' COMMENT '0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `dialogue_id` bigint(20) NOT NULL COMMENT '对话id',
   `uni_id` varchar(32) DEFAULT NULL,
@@ -37,7 +38,9 @@ CREATE TABLE IF NOT EXISTS `pri_message` (
   KEY `dialougue_id` (`dialogue_id`),
   KEY `created_time` (`created_time`),
   KEY `type` (`type`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 
 
 CREATE TABLE IF NOT EXISTS `user_system_message` (

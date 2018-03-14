@@ -42,6 +42,10 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User findNicknameAndAvatarAndIdById(Long id) {
+        return userRepository.findNicknameAndAvatarAndIdById(id);
+    }
+
 }
 
 

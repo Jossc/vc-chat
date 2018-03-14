@@ -6,6 +6,7 @@
     <result column="send_id" jdbcType="VARCHAR" property="sendId" />
     <result column="rec_id" jdbcType="VARCHAR" property="recId" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="message_type" jdbcType="INTEGER" property="messageType" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="dialogue_id" jdbcType="BIGINT" property="dialogueId" />
     <result column="uni_id" jdbcType="VARCHAR" property="uniId" />
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, send_id, rec_id, `type`, created_time, dialogue_id, uni_id, message
+    id, send_id, rec_id, `type`, message_type, created_time, dialogue_id, uni_id, message
   </sql>
   <select id="selectByExample" parameterType="com.vcg.chat.logic.model.query.PriMessageExample" resultMap="BaseResultMap">
     select
@@ -110,11 +111,13 @@
   </delete>
   <insert id="insert" keyProperty="id" parameterType="com.vcg.chat.logic.model.PriMessage" useGeneratedKeys="true">
     insert into pri_message (id, send_id, rec_id, 
-      `type`, created_time, dialogue_id, 
-      uni_id, message)
+      `type`, message_type, created_time, 
+      dialogue_id, uni_id, message
+      )
     values (#{id,jdbcType=BIGINT}, #{sendId,jdbcType=VARCHAR}, #{recId,jdbcType=VARCHAR}, 
-      #{type,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, #{dialogueId,jdbcType=BIGINT}, 
-      #{uniId,jdbcType=VARCHAR}, #{message,jdbcType=LONGVARCHAR})
+      #{type,jdbcType=INTEGER}, #{messageType,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{dialogueId,jdbcType=BIGINT}, #{uniId,jdbcType=VARCHAR}, #{message,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" keyProperty="id" parameterType="com.vcg.chat.logic.model.PriMessage" useGeneratedKeys="true">
     insert into pri_message
@@ -130,6 +133,9 @@
       </if>
       <if test="type != null">
         `type`,
+      </if>
+      <if test="messageType != null">
+        message_type,
       </if>
       <if test="createdTime != null">
         created_time,
@@ -156,6 +162,9 @@
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=INTEGER},
       </if>
       <if test="createdTime != null">
         #{createdTime,jdbcType=TIMESTAMP},
@@ -192,6 +201,9 @@
       <if test="record.type != null">
         `type` = #{record.type,jdbcType=INTEGER},
       </if>
+      <if test="record.messageType != null">
+        message_type = #{record.messageType,jdbcType=INTEGER},
+      </if>
       <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       </if>
@@ -215,6 +227,7 @@
       send_id = #{record.sendId,jdbcType=VARCHAR},
       rec_id = #{record.recId,jdbcType=VARCHAR},
       `type` = #{record.type,jdbcType=INTEGER},
+      message_type = #{record.messageType,jdbcType=INTEGER},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       dialogue_id = #{record.dialogueId,jdbcType=BIGINT},
       uni_id = #{record.uniId,jdbcType=VARCHAR},
@@ -234,6 +247,9 @@
       </if>
       <if test="type != null">
         `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="messageType != null">
+        message_type = #{messageType,jdbcType=INTEGER},
       </if>
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
@@ -255,6 +271,7 @@
     set send_id = #{sendId,jdbcType=VARCHAR},
       rec_id = #{recId,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=INTEGER},
+      message_type = #{messageType,jdbcType=INTEGER},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       dialogue_id = #{dialogueId,jdbcType=BIGINT},
       uni_id = #{uniId,jdbcType=VARCHAR},
@@ -280,9 +297,10 @@
       (
 	#{item.id},
 	#{item.sendId},#{item.recId},
-	#{item.type},#{item.createdTime},
-	#{item.dialogueId},#{item.uniId},
-	#{item.message})
+	#{item.type},#{item.messageType},
+	#{item.createdTime},#{item.dialogueId},
+	#{item.uniId},#{item.message}
+	)
     </foreach>
   </insert>
   <update id="updateBatch" parameterType="java.util.List">
@@ -300,6 +318,9 @@
 			</if>
 			<if test="type!=null">
 				type = #{item.type},
+			</if>
+			<if test="messageType!=null">
+				message_type = #{item.messageType},
 			</if>
 			<if test="createdTime!=null">
 				created_time = #{item.createdTime},
