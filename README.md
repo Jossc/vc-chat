@@ -231,6 +231,15 @@ cd vc-chat
 sh mvnw package -Dmanve.test.skip=true
 ```
 
+### 启动前期准备
+
+1. 创建数据库 vc_chat
+2. 恢复 ./vc-chat-oauth2/src/main/resources/db/migration/v1__vc_oauth.sql oauth2 表结构
+3. 恢复 ./vc-chat-oauth2/src/main/resources/db/migration/user.sql 测试用户
+4. 恢复 ./vc-chat-logic/src/main/resources/db/migration/V1__vc-chat.sql 消息表结构
+5. 启动 redis
+6. 启动 rabbitmq
+
 ### 启动注册中心
 ```
 java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-configserver/target/vc-chat-configserver-0.0.1-SNAPSHOT.jar
