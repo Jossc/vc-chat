@@ -223,3 +223,40 @@ Lombok | 简化Pojo |[https://projectlombok.org/](https://projectlombok.org/)
 2. [Jhipster](https://start.jhipster.tech/#/)
 
 ## 构建应用并启动
+
+### 编译
+```
+git clone https://github.com/wu191287278/vc-chat.git
+cd vc-chat
+sh mvnw package -Dmanve.test.skip=true
+```
+
+### 启动注册中心
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-configserver/target/vc-chat-configserver-0.0.1-SNAPSHOT.jar
+```
+
+### 启动注册中心
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-discovery/target/vc-chat-discovery-0.0.1-SNAPSHOT.jar
+```
+
+### 启动oauth2服务
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-oauth2/target/vc-chat-oauth2-0.0.1-SNAPSHOT.jar
+```
+
+### 启动chat-server服务
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-server/target/vc-chat-server-0.0.1-SNAPSHOT.jar
+```
+
+### 启动vc-chat-logic服务
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-logic/target/vc-chat-logic-0.0.1-SNAPSHOT.jar
+```
+
+### 启动vc-chat-sample 演示项目
+```
+java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-sample/target/vc-chat-sample-0.0.1-SNAPSHOT.jar
+```
