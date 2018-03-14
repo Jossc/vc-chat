@@ -228,7 +228,7 @@ Lombok | 简化Pojo |[https://projectlombok.org/](https://projectlombok.org/)
 ```
 git clone https://github.com/wu191287278/vc-chat.git
 cd vc-chat
-sh mvnw package -Dmanve.test.skip=true
+sh mvnw package -Dmaven.test.skip=true
 ```
 
 ### 启动前期准备
