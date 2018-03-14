@@ -28,7 +28,7 @@ docker-compose -f ./docker/docker-compose.yml up -d
 | [vc-chat-oauth2](./vc-chat-oauth2) | Oauth2安全验证,用于建立socketio连接的时候进行验证|com.vcg.chat.oauth2.VcChatOAuth2ServerApplication |   9999 | 3 
 | [vc-chat-server](./vc-chat-server) |  使用socketio 用于接受连接和消息路由。不做逻辑处理。|com.vcg.chat.server.VcChatServerApplication |  web端口:8081,socketio端口: 1337 | 4
 | [vc-chat-logic](./vc-chat-logic) |  逻辑处理层,用于消息存储与发送|com.vcg.chat.logic.VcChatLogicApplication|  8082 |  5
-| [vc-chat-sample](./vc-chat-sample) |  演示项目,依赖上层服务所有都启动(实现部分)|com.vcg.chat.sample.VcChatSampleApplication|  8080 |  6
+| [vc-chat-sample](./vc-chat-sample) |  演示项目,依赖上层服务所有都启动(已完成)|com.vcg.chat.sample.VcChatSampleApplication|  8080 |  6
 
 ### vc-chat-server
 ---
@@ -53,7 +53,8 @@ docker-compose -f ./docker/docker-compose.yml up -d
 
 #### 推送测试
 
-地址: http://localhost:8080/index2.html
+地址: http://localhost:8080/index.html
+
 
 
 ### vc-chat-logic
