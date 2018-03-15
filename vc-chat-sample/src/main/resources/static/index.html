@@ -229,7 +229,7 @@
                     if (socket) {
                         return;
                     }
-                    socket = io.connect('http://localhost:1337/?accessToken=' + $rootScope.loginUser.details.tokenValue);
+                    socket = io.connect('http://localhost:1337/?accessToken=' + response.details.tokenValue);
                     socket.on('connect', function () {
                         console.log("连接成功")
                     });
@@ -247,7 +247,7 @@
                     });
 
                     socket.on("error", function (message) {
-                        notify($rootScope.loginUser.userAuthentication.details.username, $rootScope.loginUser.userAuthentication.details.avatar, dialogue.lastMessage);
+                        notify(response.userAuthentication.details.username,response.userAuthentication.details.avatar, dialogue.lastMessage);
                     });
 
                     socket.on('disconnect', function () {

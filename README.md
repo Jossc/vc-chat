@@ -240,7 +240,7 @@ sh mvnw package -Dmaven.test.skip=true
 5. 启动 redis
 6. 启动 rabbitmq
 
-### 启动注册中心
+### 启动配置中心
 ```
 java -jar -server -Xms512m -Xmx512m -Dspring.profiles.active=prod ./vc-chat-configserver/target/vc-chat-configserver-0.0.1-SNAPSHOT.jar
 ```
