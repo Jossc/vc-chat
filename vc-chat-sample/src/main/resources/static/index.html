@@ -226,6 +226,7 @@
             $http.get('/me')
                 .success(function (response, state) {
                     $rootScope.loginUser = response;
+
                     if (socket) {
                         return;
                     }
@@ -252,6 +253,7 @@
 
                     socket.on('disconnect', function () {
                     });
+                    $rootScope.getUserUnreadTotal(response.userAuthentication.details.id);
                 })
                 .error(function (response) {
                     console.log(response.message)
@@ -266,7 +268,6 @@
                         $scope.userUnreadTotal = 0;
                     })
             };
-            $rootScope.getUserUnreadTotal();
         });
 
     }]);
