@@ -72,7 +72,7 @@ public class ChatController {
 
         // 简单判断 消息类型 0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息
         if (file.getOriginalFilename().contains(".mp4")) {
-            priMessage.setMessageType(2);
+            priMessage.setMessageType(3);
         } else {
             priMessage.setMessageType(1);
         }
