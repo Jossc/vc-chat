@@ -36,7 +36,10 @@
                             <li ng-repeat="item in onlineUsers">
                                 <img ng-src="{{item.avatar}}" alt="{{item.username}}" height="120px" width="120px">
                                 <a class="users-list-name" href="#">{{item.username}}</a>
-                                <button class="flat btn btn-primary btn-small" ng-if="item.username!=loginUser.principal" ng-click="createDialogue(item.id)">添加好友</button>
+                                <button class="flat btn btn-primary btn-small"
+                                        ng-if="item.username!=loginUser.principal" ng-click="createDialogue(item.id)">
+                                    添加好友
+                                </button>
                             </li>
                         </ul>
                         <!-- /.users-list -->
@@ -66,11 +69,14 @@
                     <div class="box-body no-padding">
                         <ul class="users-list clearfix">
                             <li ng-repeat="item in userDialogueDTOs">
-                                <a href="javascript:void(0)"  ng-click="changDialogue(item.user.id,item.userDialogue.id)" >
+                                <a href="javascript:void(0)"
+                                   ng-click="changDialogue(item.user.id,item.userDialogue.id)">
                                     <img ng-src="{{item.user.avatar}}" alt="User Image" height="128" width="128">
                                 </a>
                                 <a class="users-list-name" href="javascript:void(0)">{{item.user.username}}</a>
-                                <button class="flat btn btn-danger btn-small" ng-click="deleteDialogue(item.userDialogue.id)">删除</button>
+                                <button class="flat btn btn-danger btn-small"
+                                        ng-click="deleteDialogue(item.userDialogue.id)">删除
+                                </button>
                             </li>
                         </ul>
                         <!-- /.users-list -->
@@ -105,7 +111,8 @@
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
                             <div ng-repeat="item in priMessageDTO.priMessages">
-                                <div class="direct-chat-msg" ng-if="item.recId==loginUser.userAuthentication.details.id" >
+                                <div class="direct-chat-msg"
+                                     ng-if="item.recId==loginUser.userAuthentication.details.id">
                                     <div class="direct-chat-info clearfix">
                                         <span class="direct-chat-name pull-left">{{priMessageDTO.toUser.username}}</span>
                                         <span class="direct-chat-timestamp pull-right">{{item.priMessage.updatedTime}}</span>
@@ -117,11 +124,20 @@
                                     <div class="direct-chat-text">
                                         {{item.message}}
                                     </div>
+                                    <div class="direct-chat-text" ng-if="item.messageType==1">
+                                        <img  src="{{item.message}}">
+                                    </div>
+
+                                    <div class="direct-chat-text" ng-if="item.messageType==2">
+                                        <video src="{{item.message}}" controls="controls" autoplay>
+                                        </video>
+                                    </div>
                                     <!-- /.direct-chat-text -->
                                 </div>
 
                                 <!-- Message to the right -->
-                                <div class="direct-chat-msg right" ng-if="item.sendId==loginUser.userAuthentication.details.id" >
+                                <div class="direct-chat-msg right"
+                                     ng-if="item.sendId==loginUser.userAuthentication.details.id">
                                     <div class="direct-chat-info clearfix">
                                         <span class="direct-chat-name pull-right">{{priMessageDTO.user.username}}</span>
                                         <span class="direct-chat-timestamp pull-left">{{item.priMessage.updatedTime}}</span>
@@ -130,8 +146,15 @@
                                     <img class="direct-chat-img" ng-src="{{priMessageDTO.user.avatar}}"
                                          alt="message user image">
                                     <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
+                                    <div class="direct-chat-text" ng-if="item.messageType==0">
                                         {{item.message}}
+                                    </div>
+                                    <div class="direct-chat-text" ng-if="item.messageType==1">
+                                        <img  src="{{item.message}}" width="320" height="640">
+                                    </div>
+
+                                    <div class="direct-chat-text" ng-if="item.messageType==2">
+                                        <video src="{{item.message}}"  width="320" height="640">
                                     </div>
                                     <!-- /.direct-chat-text -->
                                 </div>
@@ -139,22 +162,39 @@
 
                             </div>
                             <!--/.direct-chat-messages-->
-                            </div>
+                        </div>
 
-                            <!-- /.direct-chat-msg -->
+                        <!-- /.direct-chat-msg -->
 
 
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
-                        <form  method="post" ng-submit="sendMessage(message)">
+                        <form method="post" ng-submit="upload()">
                             <div class="input-group">
-                                <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message">
+                                <input type="file" name="file" id="file">
                                 <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning btn-flat" ng-click="sendMessage(message)">Send</button>
+                            <button type="button" class="btn btn-primary btn-flat"
+                                    ng-click="upload()">上传</button>
                           </span>
                             </div>
                         </form>
+                    </div>
+
+                    <div class="box-footer">
+                        <form method="post" ng-submit="sendMessage(message)">
+                            <div class="input-group">
+                                <input type="text" name="message" placeholder="Type Message ..." class="form-control"
+                                       ng-model="message">
+                                <span class="input-group-btn">
+                            <button type="button" class="btn btn-warning btn-flat"
+                                    ng-click="sendMessage(message)">Send</button>
+
+                          </span>
+                            </div>
+
+                        </form>
+
                     </div>
                     <!-- /.box-footer-->
                 </div>

@@ -15,10 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +45,39 @@ public class ChatController {
     @Autowired
     private UserApi userApi;
 
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+
+    /**
+     * 上传文件用于测试图片、视频、音频消息,线上请使用s3 或 oss
+     *
+     * @param toUserId   对方id
+     * @param dialogueId 对话id
+     * @param file       文件
+     * @return
+     */
+    @PostMapping(value = "upload")
+    public void upload(@RequestParam(value = "toUserId") String toUserId,
+                       @RequestParam(value = "dialogueId") Long dialogueId,
+                       @RequestParam(value = "file") MultipartFile file) throws IOException {
+        File transferFile = new File(TEMP_DIR + "/" + file.getOriginalFilename());
+        file.transferTo(transferFile);
+        String currentUserId = getCurrentUserId();
+
+        PriMessage priMessage = new PriMessage()
+                .setSendId(currentUserId)
+                .setRecId(toUserId)
+                .setDialogueId(dialogueId)
+                .setType(0)
+                .setMessage("/storage/" + transferFile.getName());
+
+        // 简单判断 消息类型 0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息
+        if (file.getOriginalFilename().contains(".mp4")) {
+            priMessage.setMessageType(2);
+        } else {
+            priMessage.setMessageType(1);
+        }
+        userDialogueApi.sendMessage(priMessage);
+    }
 
     /**
      * 在线用户
@@ -171,9 +210,9 @@ public class ChatController {
     @ApiOperation(value = "对话消息列表")
     @GetMapping(value = "listPriMessageByDialogueId/{dialogueId}")
     PriMessageDTO listPriMessageByDialogueId(@ApiParam(value = "好友id") String toUserId,
-                                               @ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
-                                               @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
-                                               @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                             @ApiParam(value = "对话id") @PathVariable(value = "dialogueId") Long dialogueId,
+                                             @ApiParam(value = "起始位") @Min(value = 0) @RequestParam(value = "startNum", defaultValue = "0") Integer startNum,
+                                             @ApiParam(value = "取多少条") @Max(value = 100) @RequestParam(value = "size", defaultValue = "10") Integer size) {
         String currentUserId = getCurrentUserId();
         User currentUser = findNicknameAndAvatarAndIdById(Long.valueOf(currentUserId));
         User toUser = findNicknameAndAvatarAndIdById(Long.valueOf(toUserId));

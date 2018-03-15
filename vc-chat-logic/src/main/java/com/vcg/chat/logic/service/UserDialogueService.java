@@ -57,9 +57,13 @@ public class UserDialogueService {
 
         String sendId = priMessage.getSendId();
         String recId = priMessage.getRecId();
+        Integer messageType = priMessage.getMessageType();
 
         if (priMessage.getType() == null) {
             priMessage.setType(0);
+        }
+        if (messageType == null) {
+            priMessage.setMessageType(0);
         }
 
         //创建时间
@@ -190,6 +194,7 @@ public class UserDialogueService {
                 .setSendId(priMessage.getSendId())
                 .setRecId(priMessage.getRecId())
                 .setCreatedTime(priMessage.getCreatedTime())
+                .setMessageType(messageType)
                 .setDialogueId(sendDialogue.getId());
         priMessage.setDialogueId(recDialogue.getId());
         priMessageDao.insertSelective(priMessage);
@@ -272,7 +277,7 @@ public class UserDialogueService {
                 .peek(u -> {
                     //判断本身是不是父对话,如果是查询本对话的所有子对话的未读数量
                     if (u.getParentMake() != null && u.getParentMake() == 1) {
-                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(userId,u.getId());
+                        Integer parentUnreadTotal = sumParentDialogueUnreadTotal(userId, u.getId());
                         u.setUnreadTotal(parentUnreadTotal);
                     }
                 })

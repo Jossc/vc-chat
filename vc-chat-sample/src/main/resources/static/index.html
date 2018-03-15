@@ -247,7 +247,7 @@
                     });
 
                     socket.on("error", function (message) {
-                        notify(response.userAuthentication.details.username,response.userAuthentication.details.avatar, dialogue.lastMessage);
+                        notify(response.userAuthentication.details.username, response.userAuthentication.details.avatar, dialogue.lastMessage);
                     });
 
                     socket.on('disconnect', function () {
@@ -257,7 +257,16 @@
                     console.log(response.message)
                 });
 
-
+            $rootScope.getUserUnreadTotal = function (userId) {
+                $http.get("/chat/getUserUnreadTotal/" + userId)
+                    .success(function (response) {
+                        $scope.userUnreadTotal = response;
+                    })
+                    .error(function (response) {
+                        $scope.userUnreadTotal = 0;
+                    })
+            };
+            $rootScope.getUserUnreadTotal();
         });
 
     }]);
@@ -340,7 +349,7 @@
                 .error(function (response) {
                     console.log(response);
                 })
-        }
+        };
 
         $scope.deleteDialogue = function (dialogueId) {
             $http.delete("/chat/deleteDialogue/" + dialogueId)
@@ -352,18 +361,27 @@
                 })
         };
 
-        $scope.getUserUnreadTotal = function (userId) {
-            $http.get("/chat/getUserUnreadTotal/" + userId)
-                .success(function (response) {
-                    $scope.userUnreadTotal = response;
-                })
-                .error(function (response) {
-                    $scope.userUnreadTotal = 0;
-                })
+
+
+
+        $scope.upload = function upload() {
+            var file = document.getElementById("file").files[0];
+            // FormData 对象
+            var form = new FormData();
+            form.append("toUserId",  $scope.currentToUserId);//可以增加表单数据
+            form.append("dialogueId", $scope.currentToDialogueId );// 文件对象
+            form.append("file", file);// 文件对象
+            // XMLHttpRequest 对象
+            var xhr = new XMLHttpRequest();
+            xhr.open("post", "/chat/upload", true);
+            xhr.onload = function () {
+                alert("上传完成!");
+            };
+            xhr.send(form);
         };
+
         $scope.onlineUsers();
         $scope.listDialogue();
-        $scope.getUserUnreadTotal($rootScope.loginUser.userAuthentication.details.id);
 
 
     });
@@ -407,6 +425,8 @@
             alert(message);
         }
     }
+
+
 </script>
 
 </html>

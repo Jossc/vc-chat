@@ -7,6 +7,10 @@ spring:
   aop:
     auto: true
     proxy-target-class: true
+  http:
+    multipart:
+      max-request-size: 100Mb
+      max-file-size: 100Mb
 
 eureka:
   instance:
