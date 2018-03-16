@@ -52,12 +52,14 @@ public class ChatController {
      *
      * @param toUserId   对方id
      * @param dialogueId 对话id
+     * @param messageType 0 普通消息 1 图片消息  2 视频消息 3 语音消息 4 图文消息 5 实时语音消息 6 实时视频消息 7 其他消息
      * @param file       文件
      * @return
      */
     @PostMapping(value = "upload")
     public void upload(@RequestParam(value = "toUserId") String toUserId,
                        @RequestParam(value = "dialogueId") Long dialogueId,
+                       @RequestParam(value = "messageType") Integer messageType,
                        @RequestParam(value = "file") MultipartFile file) throws IOException {
         File transferFile = new File(TEMP_DIR + "/" + file.getOriginalFilename());
         file.transferTo(transferFile);
@@ -68,14 +70,8 @@ public class ChatController {
                 .setRecId(toUserId)
                 .setDialogueId(dialogueId)
                 .setType(0)
+                .setMessageType(messageType)
                 .setMessage("/storage/" + transferFile.getName());
-
-        // 简单判断 消息类型 0 普通消息 1 图片消息 2 语音消息  3 视频消息 4 实时语音消息 5 实时视频消息
-        if (file.getOriginalFilename().contains(".mp4")) {
-            priMessage.setMessageType(3);
-        } else {
-            priMessage.setMessageType(1);
-        }
         userDialogueApi.sendMessage(priMessage);
     }
 

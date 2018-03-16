@@ -255,8 +255,12 @@
                                 }
                                 if (priMessage.messageType === 1) {
                                     outputImg(username, avatar, createdTime, lastMessage);
-                                } else if (priMessage.messageType === 3) {
+                                } else if (priMessage.messageType === 2) {
                                     outputVideo(username, avatar, createdTime, lastMessage);
+                                } else if (priMessage.messageType === 3) {
+                                    outGraphicText(username, avatar, createdTime, lastMessage);
+                                } else if (priMessage.messageType === 7) {
+                                    outputFileMessage(username, avatar, createdTime, lastMessage);
                                 } else {
                                     outputMessage(username, avatar, createdTime, lastMessage);
                                 }
@@ -327,10 +331,11 @@
                 })
         };
 
-        $scope.sendMessage = function (message) {
+        $scope.sendMessage = function (message, messageType) {
             var req = {
                 "message": message,
-                "recId": $scope.currentToUserId
+                "recId": $scope.currentToUserId,
+                "messageType": messageType
             };
             $http.post("/chat/sendMessage", req)
                 .success(function (response) {
@@ -362,9 +367,9 @@
                 .success(function (response) {
                     if (dialogueId === $rootScope.currentToDialogueId) {
                         $("#directChat").html("");
+                        $("#chat").hide();
                     }
                     $scope.listDialogue();
-                    $("#chat").hide();
                 })
                 .error(function (response) {
                     console.log(response)
@@ -387,8 +392,14 @@
 
                         if (priMessage.messageType === 1) {
                             outputImg(username, avatar, createdTime, lastMessage);
-                        } else if (priMessage.messageType === 3) {
+                        } else if (priMessage.messageType === 2) {
                             outputVideo(username, avatar, createdTime, lastMessage);
+                        } else if (priMessage.messageType === 3) {
+                            outGraphicText(username, avatar, createdTime, lastMessage);
+                        } else if (priMessage.messageType === 0) {
+                            outputMessage(username, avatar, createdTime, lastMessage);
+                        } else if (priMessage.messageType === 7) {
+                            outputFileMessage(username, avatar, createdTime, lastMessage);
                         } else {
                             outputMessage(username, avatar, createdTime, lastMessage);
                         }
@@ -403,13 +414,24 @@
         };
 
 
-        $scope.upload = function upload() {
-            var file = document.getElementById("file").files[0];
+        $scope.upload = function upload(messageType) {
+            var file;
+            if (messageType === 1) {
+                file = document.getElementById("file").files[0];
+            }
+            if (messageType === 2) {
+                file = document.getElementById("file2").files[0];
+            }
+
+            if (messageType === 7) {
+                file = document.getElementById("file7").files[0];
+            }
             // FormData 对象
             var form = new FormData();
             form.append("toUserId", $rootScope.currentToUserId);//可以增加表单数据
             form.append("dialogueId", $rootScope.currentToDialogueId);// 文件对象
             form.append("file", file);// 文件对象
+            form.append("messageType", messageType);// 文件对象
             // XMLHttpRequest 对象
             var xhr = new XMLHttpRequest();
             xhr.open("post", "/chat/upload", true);
@@ -417,6 +439,26 @@
                 console.log(event);
             };
             xhr.send(form);
+        };
+
+        $scope.uploadImageModal = function () {
+            $('#uploadImgDiv').modal('toggle')
+        };
+
+        $scope.uploadVideoModal = function () {
+            $('#uploadVideoDiv').modal('toggle')
+        };
+
+        $scope.sendGraphicTextModal = function () {
+            $('#sendGraphicTextDiv').modal('toggle')
+        };
+
+        $scope.uploadFileDivModal = function () {
+            $('#uploadFileDiv').modal('toggle')
+        };
+
+        $scope.sendGraphicText = function (graphicText) {
+            $scope.sendMessage(JSON.stringify(graphicText), 3);
         };
 
         $scope.onlineUsers();
@@ -481,10 +523,27 @@
         $("#directChat").append(body)
     }
 
+    function outputFileMessage(username, avatar, createdTime, message) {
+        var host = location.protocol + '//' + location.host;
+        var body = $(' <div class="box-footer box-comments">\n' +
+            '                            <div class="box-comment">\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' + 'alt="User Image">\n' +
+            '                                <div class="comment-text">\n' +
+            '                                  <span class="username">\n' +
+            '                                   ' + username + '' +
+            '                                    <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span>\n' +
+            '                                    <a href="' + message + '" target="_blank">' + host + message + '</a>\n' +
+            '                                </div>\n' +
+            '                            </div>\n' +
+            '                        </div>');
+
+        $("#directChat").append(body)
+    }
+
     function outputImg(username, avatar, createdTime, message) {
         var body = $('<div class="box-body" >\n' +
             '                            <div class="box-comment">\n' +
-            '                                <img class="img-circle img-sm" src="'+avatar+'"\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
             '                                     alt="User Image">\n' +
             '                                <div class="comment-text">\n' +
             '                              <span class="username">\n' +
@@ -501,18 +560,44 @@
     function outputVideo(username, avatar, createdTime, message) {
         var body = $('<div class="box-body" >\n' +
             '                            <div class="box-comment">\n' +
-            '                                <img class="img-circle img-sm" src="'+avatar+'"\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
             '                                     alt="User Image">\n' +
             '                                <div class="comment-text">\n' +
             '                              <span class="username">\n' +
             '                                 ' + username + '' +
-            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString()+ '</span></span><!-- /.username -->\n' +
+            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
             '                                </div>\n' +
             '                            </div>\n' +
             '                            <video class="img-responsive pad" controls="controls" autoplay src="' + message + '"\n' +
             '                                >\n' +
             '                        </div>');
         $("#directChat").append(body)
+    }
+
+    function outGraphicText(username, avatar, createdTime, message) {
+        var obj = JSON.parse(message);
+        var body = $('<div class="attachment-block clearfix">\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
+            '                                     alt="User Image">\n' +
+            '                                <div class="comment-text">\n' +
+            '                              <span class="username">\n' +
+            '                                 ' + username + '' +
+            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
+            '                                </div>\n' +
+            '                <img class="attachment-img" src="' + obj.img + '" alt="Attachment Image">\n' +
+            '\n' +
+            '                <div class="attachment-pushed">\n' +
+            '                  <h4 class="attachment-heading"><a href="' + obj.url + '" target="_blank">' + obj.title + '</a></h4>\n' +
+            '\n' +
+            '                  <div class="attachment-text">\n' +
+            '             ' + obj.text + ' <a href="' + obj.url + '" target="_blank">more</a>\n' +
+            '                  </div>\n' +
+            '                  <!-- /.attachment-text -->\n' +
+            '                </div>\n' +
+            '                <!-- /.attachment-pushed -->\n' +
+            '              </div>');
+        $("#directChat").append(body)
+
     }
 
 </script>

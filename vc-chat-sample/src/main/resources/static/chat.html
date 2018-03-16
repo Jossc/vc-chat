@@ -36,7 +36,7 @@
                             <li ng-repeat="item in onlineUsers">
                                 <img ng-src="{{item.avatar}}" alt="{{item.username}}" height="120px" width="120px">
                                 <a class="users-list-name" href="#">{{item.username}}</a>
-                                <button class="flat btn btn-primary btn-small"
+                                <button class="flat btn btn-primary btn-sm"
                                         ng-if="item.username!=loginUser.principal" ng-click="createDialogue(item.id)">
                                     添加好友
                                 </button>
@@ -74,7 +74,7 @@
                                     <img ng-src="{{item.user.avatar}}" alt="User Image" height="128" width="128">
                                 </a>
                                 <a class="users-list-name" href="javascript:void(0)">{{item.user.username}}</a>
-                                <button class="flat btn btn-danger btn-small"
+                                <button class="flat btn btn-danger btn-sm"
                                         ng-click="deleteDialogue(item.userDialogue.id)">删除
                                 </button>
                             </li>
@@ -95,30 +95,40 @@
                             <span class="username"><a href="#">{{priMessageDTO.toUser.username}}</a></span>
                         </div>
                         <!-- /.box-tools -->
+                        <div class="box-tools">
+                            <div class="btn-group btn-small">
+                                <button type="button" class="btn btn-primary btn-sm btn-flat"
+                                        ng-click="uploadImageModal()">
+                                    图片
+                                </button>
+                                <button type="button" class="btn btn-info btn-sm btn-flat"
+                                        ng-click="uploadVideoModal()">
+                                    视频
+                                </button>
+                                <button type="button" class="btn btn-warning btn-sm btn-flat"
+                                        ng-click="uploadFileDivModal()">
+                                    文件
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="sendGraphicTextModal()">图文
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
                     <!-- /.box-header -->
                     <div id="directChat">
 
                     </div>
-                    <div class="box-footer">
-                        <form method="post" ng-submit="upload()">
-                            <div class="input-group">
-                                <input type="file" name="file" id="file">
-                                <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary btn-flat"
-                                    ng-click="upload()">上传</button>
-                          </span>
-                            </div>
-                        </form>
-                    </div>
                     <!-- /.box-footer -->
                     <div class="box-footer">
-                        <form  method="post" ng-submit="sendMessage(message)">
+                        <form method="post" ng-submit="sendMessage(message,0)">
                             <img class="img-responsive img-circle img-sm"
                                  src="{{priMessageDTO.user.avatar}}" alt="Alt Text">
                             <!-- .img-push is used to add margin to elements next to floating images -->
                             <div class="img-push">
-                                <input type="text" class="form-control input-sm" placeholder="Press enter to post comment" ng-model="message">
+                                <input type="text" class="form-control input-sm"
+                                       placeholder="Press enter to post comment" ng-model="message">
                             </div>
                         </form>
                     </div>
@@ -130,4 +140,116 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
+
+
+    <div class='modal' id='uploadImgDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Upload Image</h4>
+                </div>
+                <form method="post" ng-submit="upload(1)">
+                    <div class='modal-body'>
+                        <div class="input-group">
+                            <input type="file" name="file" id="file">
+                        </div>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="submit" class='btn btn-primary'>Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class='modal' id='uploadVideoDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Upload Video</h4>
+                </div>
+                <form method="post" ng-submit="upload(2)">
+
+                    <div class='modal-body'>
+                        <div class="input-group">
+                            <input type="file" name="file" id="file2">
+                        </div>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="submit" class='btn btn-primary'>Send</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class='modal' id='uploadFileDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Upload File</h4>
+                </div>
+                <form method="post" ng-submit="upload(7)">
+
+                    <div class='modal-body'>
+                        <div class="input-group">
+                            <input type="file" name="file" id="file7">
+                        </div>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="submit" class='btn btn-primary'>Send</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class='modal' id='sendGraphicTextDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Send GraphicText</h4>
+                </div>
+                <form method="post" ng-submit="sendGraphicText(graphicText)">
+
+                    <div class="modal-body">
+                        <div class='form-group'>
+                            <label>Title:</label>
+                            <input type='text' class='form-control' ng-model="graphicText.title" title="">
+                        </div>
+                        <div class='form-group'>
+                            <label>Text:</label>
+                            <input type='text' class='form-control' ng-model="graphicText.text" title="">
+                        </div>
+                        <div class='form-group'>
+                            <label>Image:</label>
+                            <input type='text' class='form-control' ng-model="graphicText.img" title="">
+                        </div>
+                        <div class='form-group'>
+                            <label>Url:</label>
+                            <input type='text' class='form-control' ng-model="graphicText.url" title="">
+                        </div>
+
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="submit" class='btn btn-primary'>Send</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 </div>
