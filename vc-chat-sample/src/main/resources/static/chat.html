@@ -50,7 +50,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <!-- USERS LIST -->
                 <div class="box box-danger">
                     <div class="box-header with-border">
@@ -85,90 +85,21 @@
                 </div>
                 <!--/.box -->
             </div>
-            <!-- /.col -->
-            <div class="col-md-9">
-                <!-- DIRECT CHAT -->
-                <div class="box box-warning direct-chat direct-chat-warning">
-
+            <div class="col-md-6">
+                <!-- Box Comment -->
+                <div class="box box-widget" style="display: none" id="chat">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Direct Chat</h3>
-
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts"
-                                    data-widget="chat-pane-toggle">
-                                <i class="fa fa-comments"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                    class="fa fa-times"></i>
-                            </button>
+                        <div class="user-block">
+                            <img class="img-circle" src="{{priMessageDTO.toUser.avatar}}"
+                                 alt="User Image">
+                            <span class="username"><a href="#">{{priMessageDTO.toUser.username}}</a></span>
                         </div>
+                        <!-- /.box-tools -->
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body">
-                        <!-- Conversations are loaded here -->
-                        <div class="direct-chat-messages">
-                            <!-- Message. Default to the left -->
-                            <div ng-repeat="item in priMessageDTO.priMessages">
-                                <div class="direct-chat-msg"
-                                     ng-if="item.recId==loginUser.userAuthentication.details.id">
-                                    <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-name pull-left">{{priMessageDTO.toUser.username}}</span>
-                                        <span class="direct-chat-timestamp pull-right">{{item.priMessage.updatedTime}}</span>
-                                    </div>
-                                    <!-- /.direct-chat-info -->
-                                    <img class="direct-chat-img" ng-src="{{priMessageDTO.toUser.avatar}}"
-                                         alt="message user image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        {{item.message}}
-                                    </div>
-                                    <div class="direct-chat-text" ng-if="item.messageType==1">
-                                        <img  src="{{item.message}}">
-                                    </div>
-
-                                    <div class="direct-chat-text" ng-if="item.messageType==3">
-                                        <video src="{{item.message}}" controls="controls" autoplay>
-                                        </video>
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div>
-
-                                <!-- Message to the right -->
-                                <div class="direct-chat-msg right"
-                                     ng-if="item.sendId==loginUser.userAuthentication.details.id">
-                                    <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-name pull-right">{{priMessageDTO.user.username}}</span>
-                                        <span class="direct-chat-timestamp pull-left">{{item.priMessage.updatedTime}}</span>
-                                    </div>
-                                    <!-- /.direct-chat-info -->
-                                    <img class="direct-chat-img" ng-src="{{priMessageDTO.user.avatar}}"
-                                         alt="message user image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text" ng-if="item.messageType==0">
-                                        {{item.message}}
-                                    </div>
-                                    <div class="direct-chat-text" ng-if="item.messageType==1">
-                                        <img  src="{{item.message}}" width="320" height="640">
-                                    </div>
-
-                                    <div class="direct-chat-text" ng-if="item.messageType==2">
-                                        <video src="{{item.message}}"  width="320" height="640">
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div>
-                                <!-- /.direct-chat-msg -->
-
-                            </div>
-                            <!--/.direct-chat-messages-->
-                        </div>
-
-                        <!-- /.direct-chat-msg -->
-
+                    <div id="directChat">
 
                     </div>
-                    <!-- /.box-body -->
                     <div class="box-footer">
                         <form method="post" ng-submit="upload()">
                             <div class="input-group">
@@ -180,27 +111,21 @@
                             </div>
                         </form>
                     </div>
-
+                    <!-- /.box-footer -->
                     <div class="box-footer">
-                        <form method="post" ng-submit="sendMessage(message)">
-                            <div class="input-group">
-                                <input type="text" name="message" placeholder="Type Message ..." class="form-control"
-                                       ng-model="message">
-                                <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning btn-flat"
-                                    ng-click="sendMessage(message)">Send</button>
-
-                          </span>
+                        <form  method="post" ng-submit="sendMessage(message)">
+                            <img class="img-responsive img-circle img-sm"
+                                 src="{{priMessageDTO.user.avatar}}" alt="Alt Text">
+                            <!-- .img-push is used to add margin to elements next to floating images -->
+                            <div class="img-push">
+                                <input type="text" class="form-control input-sm" placeholder="Press enter to post comment" ng-model="message">
                             </div>
-
                         </form>
-
                     </div>
-                    <!-- /.box-footer-->
+                    <!-- /.box-footer -->
                 </div>
-                <!--/.direct-chat -->
+                <!-- /.box -->
             </div>
-            <!-- /.col -->
         </div>
         <!-- /.row -->
     </section>
