@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `user_dialogue` (
   `last_message` text COMMENT '最后一条消息',
   `push` int(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '0.正常全部接收 1.只接收不弹出 2.不接收不弹出',
   `uni_id` varchar(32) NOT NULL COMMENT '使用双方id md5 加密 生成唯一id',
-  `type` int(2) unsigned NOT NULL COMMENT '0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ',
+  `type` int(2) unsigned NOT NULL DEFAULT '0' COMMENT '0 普通消息 1 系统消息 2 点赞  3 关注 4 评论消息 5 作品 6 部落 7 签约 8 活动 ',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_id` (`uni_id`),
   KEY `user_id` (`user_id`),
