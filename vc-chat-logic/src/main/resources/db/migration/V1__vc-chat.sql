@@ -41,8 +41,6 @@ CREATE TABLE IF NOT EXISTS `pri_message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-
-
 CREATE TABLE IF NOT EXISTS `user_system_message` (
   `id` bigint(19) NOT NULL AUTO_INCREMENT,
   `user_id` varchar(64) NOT NULL COMMENT '用户id',
@@ -64,4 +62,3 @@ CREATE TABLE IF NOT EXISTS `system_message` (
   PRIMARY KEY (`id`),
   KEY `created_time` (`created_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
