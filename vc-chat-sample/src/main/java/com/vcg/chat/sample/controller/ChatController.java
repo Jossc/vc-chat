@@ -1,5 +1,6 @@
 package com.vcg.chat.sample.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.vcg.chat.api.PushApi;
 import com.vcg.chat.api.UserApi;
 import com.vcg.chat.api.UserDialogueApi;
@@ -7,6 +8,7 @@ import com.vcg.chat.api.model.Request;
 import com.vcg.chat.api.model.User;
 import com.vcg.chat.logic.model.PriMessage;
 import com.vcg.chat.logic.model.UserDialogue;
+import com.vcg.chat.sample.model.FileDescription;
 import com.vcg.chat.sample.model.PriMessageDTO;
 import com.vcg.chat.sample.model.UserDialogueDTO;
 import io.swagger.annotations.ApiOperation;
@@ -15,18 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -50,10 +50,10 @@ public class ChatController {
     /**
      * 上传文件用于测试图片、视频、音频消息,线上请使用s3 或 oss
      *
-     * @param toUserId   对方id
-     * @param dialogueId 对话id
+     * @param toUserId    对方id
+     * @param dialogueId  对话id
      * @param messageType 0 普通消息 1 图片消息  2 视频消息 3 语音消息 4 图文消息 5 实时语音消息 6 实时视频消息 7 其他消息
-     * @param file       文件
+     * @param file        文件
      * @return
      */
     @PostMapping(value = "upload")
@@ -61,9 +61,16 @@ public class ChatController {
                        @RequestParam(value = "dialogueId") Long dialogueId,
                        @RequestParam(value = "messageType") Integer messageType,
                        @RequestParam(value = "file") MultipartFile file) throws IOException {
-        File transferFile = new File(TEMP_DIR + "/" + file.getOriginalFilename());
+        String[] split = file.getOriginalFilename().split("[.]");
+        String ext = "." + split[split.length - 1];
+        File transferFile = new File(TEMP_DIR + "/" + UUID.randomUUID().toString() + ext);
         file.transferTo(transferFile);
         String currentUserId = getCurrentUserId();
+
+        FileDescription fileDescription = new FileDescription()
+                .setName(file.getOriginalFilename())
+                .setSize(transferFile.length())
+                .setUrl("/storage/" + transferFile.getName());
 
         PriMessage priMessage = new PriMessage()
                 .setSendId(currentUserId)
@@ -71,7 +78,7 @@ public class ChatController {
                 .setDialogueId(dialogueId)
                 .setType(0)
                 .setMessageType(messageType)
-                .setMessage("/storage/" + transferFile.getName());
+                .setMessage(JSON.toJSONString(fileDescription));
         userDialogueApi.sendMessage(priMessage);
     }
 

@@ -257,6 +257,8 @@
                                     outputImg(username, avatar, createdTime, lastMessage);
                                 } else if (priMessage.messageType === 2) {
                                     outputVideo(username, avatar, createdTime, lastMessage);
+                                } else if (priMessage.messageType === 8) {
+                                    outputAudio(username, avatar, createdTime, lastMessage);
                                 } else if (priMessage.messageType === 3) {
                                     outGraphicText(username, avatar, createdTime, lastMessage);
                                 } else if (priMessage.messageType === 7) {
@@ -264,6 +266,7 @@
                                 } else {
                                     outputMessage(username, avatar, createdTime, lastMessage);
                                 }
+                                document.getElementById('directChat').scrollTop = document.getElementById('directChat').scrollHeight;
                             })
                             .error(function (response) {
                                 console.log(response);
@@ -340,6 +343,7 @@
             $http.post("/chat/sendMessage", req)
                 .success(function (response) {
                     console.log(response);
+                    $scope.message = "";
                 })
                 .error(function (response) {
                     console.log(response);
@@ -379,7 +383,9 @@
         $scope.listPriMessage = function (toUserId, dialogueId) {
             $http.get("/chat/listPriMessageByDialogueId/" + dialogueId + "?toUserId=" + toUserId)
                 .success(function (response) {
-                    angular.forEach(response.priMessages, function (priMessage) {
+                    $("#directChat").html("");
+                    for (var i = response.priMessages.length - 1; i >= 0; i--) {
+                        var priMessage = response.priMessages[i];
                         var username = response.user.username;
                         var avatar = response.user.avatar;
                         var createdTime = priMessage.createdTime;
@@ -394,6 +400,8 @@
                             outputImg(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 2) {
                             outputVideo(username, avatar, createdTime, lastMessage);
+                        }else if (priMessage.messageType === 8) {
+                            outputVideo(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 3) {
                             outGraphicText(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 0) {
@@ -403,7 +411,7 @@
                         } else {
                             outputMessage(username, avatar, createdTime, lastMessage);
                         }
-                    });
+                    }
                     $scope.priMessageDTO = response;
                     $scope.readMessage(dialogueId);
                     $("#chat").show();
@@ -457,8 +465,72 @@
             $('#uploadFileDiv').modal('toggle')
         };
 
+        $scope.recordVideoDivModal = function () {
+            $('#recordVideoDiv').modal('toggle')
+        };
+
+        $scope.recordAudioDivModal = function () {
+            $('#recordAudioDiv').modal('toggle')
+        };
+
         $scope.sendGraphicText = function (graphicText) {
             $scope.sendMessage(JSON.stringify(graphicText), 3);
+        };
+
+        $scope.startRecordVideo = function () {
+            var locatstream;
+            var servers = {iceServers: []};
+            navigator.getUserMedia({
+                audio: true,
+                video: {mandatory: {maxWidth: 600, maxHeight: 233}}
+            }, function (stream) {
+                var videoRecord = document.getElementById("recordVideo");
+                videoRecord.src = window.URL.createObjectURL(stream);
+                var options = {mimeType: 'video/webm'};
+                mediaRecorder = new MediaRecorder(stream, options);
+                mediaRecorder.ondataavailable = handleDataAvailable;
+                mediaRecorder.start(100); // collect 100ms of data
+            }, function (error) {
+                console.log(error);
+            });
+        };
+
+        $scope.sendRecordVideo = function () {
+            var blob = new Blob(recordedBlobs, {type: 'video/webm'});
+            var form = new FormData();
+            form.append("file", blob);
+            form.append("toUserId", $scope.currentToUserId);
+            form.append("dialogueId", $scope.currentToDialogueId);
+            form.append("messageType", 2);
+            var request = new XMLHttpRequest();
+            request.open("POST", "/chat/upload");
+            request.send(form);
+        };
+
+        $scope.startRecordAudio = function () {
+            navigator.getUserMedia({
+                audio: true
+            }, function (stream) {
+                var recordAudio = document.getElementById("recordAudio");
+                recordAudio.src = window.URL.createObjectURL(stream);
+                mediaRecorder = new MediaRecorder(stream,{});
+                mediaRecorder.ondataavailable = handleDataAvailable;
+                mediaRecorder.start(100); // collect 100ms of data
+            }, function (error) {
+                console.log(error);
+            });
+        };
+
+        $scope.sendRecordAudio = function () {
+            var blob = new Blob(recordedBlobs, {type: 'video/wav'});
+            var form = new FormData();
+            form.append("file", blob);
+            form.append("toUserId", $scope.currentToUserId);
+            form.append("dialogueId", $scope.currentToDialogueId);
+            form.append("messageType", 8);
+            var request = new XMLHttpRequest();
+            request.open("POST", "/chat/upload");
+            request.send(form);
         };
 
         $scope.onlineUsers();
@@ -507,6 +579,63 @@
         }
     }
 
+    var recordedBlobs = [];
+    var mediaRecorder;
+
+    function handleDataAvailable(event) {
+        if (event.data && event.data.size > 0) {
+            recordedBlobs.push(event.data);
+        }
+    }
+
+
+    function stopRecordAudio() {
+        mediaRecorder.stop();
+        var recordAudio = document.getElementById("recordAudio");
+        recordAudio.pause();
+        console.log('Recorded Blobs: ', recordedBlobs);
+    }
+
+    function stopRecordVideo() {
+        mediaRecorder.stop();
+        var recordVideo = document.getElementById("recordVideo");
+        recordVideo.pause();
+        console.log('Recorded Blobs: ', recordedBlobs);
+    }
+
+    function downloadVideoRecord() {
+        var blob = new Blob(recordedBlobs, {type: 'video/webm'});
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.style.display = 'none';
+        a.target = "_blank";
+        a.href = url;
+        a.download = new Date().getTime() + '.webm';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+    }
+
+    function downloadAudioRecord() {
+        var blob = new Blob(recordedBlobs, {type: 'video/wav'});
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.style.display = 'none';
+        a.target = "_blank";
+        a.href = url;
+        a.download = new Date().getTime() + '.wav';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+    }
+
+
     function outputMessage(username, avatar, createdTime, message) {
         var body = $(' <div class="box-footer box-comments">\n' +
             '                            <div class="box-comment">\n' +
@@ -525,22 +654,42 @@
 
     function outputFileMessage(username, avatar, createdTime, message) {
         var host = location.protocol + '//' + location.host;
-        var body = $(' <div class="box-footer box-comments">\n' +
+        var fileDescription = JSON.parse(message);
+        // var body = $(' <div class="box-footer box-comments">\n' +
+        //     '                            <div class="box-comment">\n' +
+        //     '                                <img class="img-circle img-sm" src="' + avatar + '"\n' + 'alt="User Image">\n' +
+        //     '                                <div class="comment-text">\n' +
+        //     '                                  <span class="username">\n' +
+        //     '                                   ' + username + '' +
+        //     '                                    <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span>\n' +
+        //     '                                    <a href="' + message + '" target="_blank">' + host + fileDescription.url + '</a>\n' +
+        //     '                                </div>\n' +
+        //     '                            </div>\n' +
+        //     '                        </div>');
+
+        var body = $('<div class="box-body" >\n' +
             '                            <div class="box-comment">\n' +
-            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' + 'alt="User Image">\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
+            '                                     alt="User Image">\n' +
             '                                <div class="comment-text">\n' +
-            '                                  <span class="username">\n' +
-            '                                   ' + username + '' +
-            '                                    <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span>\n' +
-            '                                    <a href="' + message + '" target="_blank">' + host + message + '</a>\n' +
+            '                              <span class="username">\n' +
+            '                                 ' + username + '' +
+            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
             '                                </div>\n' +
-            '                            </div>\n' +
+            '                            </div>\n' + '<div class="mailbox-attachment-info">\n' +
+            '                    <a href="' + host + fileDescription.url + '" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> ' + fileDescription.name + '</a>\n' +
+            '                        <span class="mailbox-attachment-size">\n' +
+            '                          ' + (fileDescription.size / 1024 / 1024).toFixed(2) + ' MB\n' +
+            '                          <a href="' + host + fileDescription.url + '" class="btn btn-default btn-xs pull-right"><i class="fa fa-cloud-download"></i></a>\n' +
+            '                        </span>\n' +
+            '                  </div>' +
             '                        </div>');
 
         $("#directChat").append(body)
     }
 
     function outputImg(username, avatar, createdTime, message) {
+        var fileDescription = JSON.parse(message);
         var body = $('<div class="box-body" >\n' +
             '                            <div class="box-comment">\n' +
             '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
@@ -551,13 +700,14 @@
             '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
             '                                </div>\n' +
             '                            </div>\n' +
-            '                            <img class="img-responsive pad" src="' + message + '"\n' +
+            '                            <img class="img-responsive pad" src="' + fileDescription.url + '"\n' +
             '                                 alt="Photo">\n' +
             '                        </div>');
         $("#directChat").append(body)
     }
 
     function outputVideo(username, avatar, createdTime, message) {
+        var fileDescription = JSON.parse(message);
         var body = $('<div class="box-body" >\n' +
             '                            <div class="box-comment">\n' +
             '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
@@ -568,7 +718,25 @@
             '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
             '                                </div>\n' +
             '                            </div>\n' +
-            '                            <video class="img-responsive pad" controls="controls" autoplay src="' + message + '"\n' +
+            '                            <video class="img-responsive pad" controls="controls" autoplay src="' + fileDescription.url + '"\n' +
+            '                                >\n' +
+            '                        </div>');
+        $("#directChat").append(body)
+    }
+
+    function outputAudio(username, avatar, createdTime, message) {
+        var fileDescription = JSON.parse(message);
+        var body = $('<div class="box-body" >\n' +
+            '                            <div class="box-comment">\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
+            '                                     alt="User Image">\n' +
+            '                                <div class="comment-text">\n' +
+            '                              <span class="username">\n' +
+            '                                 ' + username + '' +
+            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
+            '                                </div>\n' +
+            '                            </div>\n' +
+            '                            <audio class="img-responsive pad" controls="controls" autoplay src="' + fileDescription.url + '"\n' +
             '                                >\n' +
             '                        </div>');
         $("#directChat").append(body)
@@ -599,6 +767,7 @@
         $("#directChat").append(body)
 
     }
+
 
 </script>
 

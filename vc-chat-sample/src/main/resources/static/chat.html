@@ -74,9 +74,8 @@
                                     <img ng-src="{{item.user.avatar}}" alt="User Image" height="128" width="128">
                                 </a>
                                 <a class="users-list-name" href="javascript:void(0)">{{item.user.username}}</a>
-                                <button class="flat btn btn-danger btn-sm"
-                                        ng-click="deleteDialogue(item.userDialogue.id)">删除
-                                </button>
+                                <p class="label label-danger">未读消息数: {{item.userDialogue.unreadTotal}}</p>
+                                <a href="javascript:void(0)" class="label-danger label" ng-click="deleteDialogue(item.userDialogue.id)">删除</a>
                             </li>
                         </ul>
                         <!-- /.users-list -->
@@ -110,15 +109,33 @@
                                     文件
                                 </button>
                                 <button type="button" class="btn btn-success btn-sm btn-flat"
-                                        ng-click="sendGraphicTextModal()">图文
+                                        ng-click="sendGraphicTextModal()">卡片
                                 </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="recordVideoDivModal()">录制视频
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="recordAudioDivModal()">录制音频
+                                </button>
+                                <a href="https://appr.tc/" target="_blank">
+                                    <button type="button" class="btn btn-success btn-sm btn-flat">语音通讯
+                                    </button>
+                                </a>
+                                <a href="https://appr.tc/" target="_blank">
+                                    <button type="button" class="btn btn-success btn-sm btn-flat">视频通讯
+                                    </button>
+                                </a>
+                                <a href="https://appr.tc/" target="_blank">
+                                    <button type="button" class="btn btn-success btn-sm btn-flat">直播
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </div>
 
                     <!-- /.box-header -->
-                    <div id="directChat">
-
+                    <div id="directChat" style="height: 400px;overflow-y:scroll">
+                        <div id="directMessage" style="display: none"></div>
                     </div>
                     <!-- /.box-footer -->
                     <div class="box-footer">
@@ -245,6 +262,59 @@
                     </div>
                     <div class='modal-footer'>
                         <button type="submit" class='btn btn-primary'>Send</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class='modal' id='recordVideoDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Record Video</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <video id="recordVideo" height="100%" width="100%" autoplay controls></video>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="button" class='btn btn-info' ng-click="startRecordVideo()">Start</button>
+                        <button type="button" class='btn btn-danger' onclick="stopRecordVideo()">Stop</button>
+                        <button type="button" class='btn btn-warning' onclick="downloadVideoRecord()">Download</button>
+                        <button type="submit" class='btn btn-primary' ng-click="sendRecordVideo()">Send</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class='modal' id='recordAudioDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Record Audio</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <audio id="recordAudio" autoplay controls></audio>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="button" class='btn btn-info' ng-click="startRecordAudio()">Start</button>
+                        <button type="button" class='btn btn-danger' onclick="stopRecordAudio()">Stop</button>
+                        <button type="button" class='btn btn-warning' onclick="downloadAudioRecord()">Download</button>
+                        <button type="submit" class='btn btn-primary' ng-click="sendRecordAudio()">Send</button>
                     </div>
                 </form>
 

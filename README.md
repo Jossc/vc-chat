@@ -185,6 +185,7 @@ Q. 解释为什么 type需要冗余存储
 |SocketIO Java版实现 | WebSocket框架服务端  | [https://github.com/mrniko/netty-socketio](https://github.com/mrniko/netty-socketio)|
 |SocketIO 其他语言客户端 | WebSocket客户端  | [https://socket.io/](https://socket.io/)|
 |Docker | 容器框架  | [https://www.docker.com/](https://www.docker.com/)|
+|WebRtc | 浏览器进行实时/录制语音、视频对话  | [https://www.w3.org/TR/webrtc/](https://www.w3.org/TR/webrtc/)|
 
 ## 后端可选框架框架:
 |技术 | 名称 | 官网|
