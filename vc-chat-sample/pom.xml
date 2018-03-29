@@ -142,6 +142,12 @@
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.ez-vcard</groupId>
+            <artifactId>ez-vcard</artifactId>
+            <version>0.10.3</version>
+        </dependency>
     </dependencies>
 
 <build>

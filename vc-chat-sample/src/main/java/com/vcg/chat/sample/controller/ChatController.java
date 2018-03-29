@@ -47,6 +47,7 @@ public class ChatController {
 
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
+
     /**
      * 上传文件用于测试图片、视频、音频消息,线上请使用s3 或 oss
      *
@@ -66,6 +67,7 @@ public class ChatController {
         File transferFile = new File(TEMP_DIR + "/" + UUID.randomUUID().toString() + ext);
         file.transferTo(transferFile);
         String currentUserId = getCurrentUserId();
+
 
         FileDescription fileDescription = new FileDescription()
                 .setName(file.getOriginalFilename())

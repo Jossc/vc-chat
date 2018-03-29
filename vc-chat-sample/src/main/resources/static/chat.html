@@ -75,7 +75,8 @@
                                 </a>
                                 <a class="users-list-name" href="javascript:void(0)">{{item.user.username}}</a>
                                 <p class="label label-danger">未读消息数: {{item.userDialogue.unreadTotal}}</p>
-                                <a href="javascript:void(0)" class="label-danger label" ng-click="deleteDialogue(item.userDialogue.id)">删除</a>
+                                <a href="javascript:void(0)" class="label-danger label"
+                                   ng-click="deleteDialogue(item.userDialogue.id)">删除</a>
                             </li>
                         </ul>
                         <!-- /.users-list -->
@@ -110,6 +111,15 @@
                                 </button>
                                 <button type="button" class="btn btn-success btn-sm btn-flat"
                                         ng-click="sendGraphicTextModal()">卡片
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="sendGraphicTextModal()">名片
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="sendLocationDivModal()">地理位置
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm btn-flat"
+                                        ng-click="takeSnapshotDivModal()">拍照
                                 </button>
                                 <button type="button" class="btn btn-success btn-sm btn-flat"
                                         ng-click="recordVideoDivModal()">录制视频
@@ -315,6 +325,66 @@
                         <button type="button" class='btn btn-danger' onclick="stopRecordAudio()">Stop</button>
                         <button type="button" class='btn btn-warning' onclick="downloadAudioRecord()">Download</button>
                         <button type="submit" class='btn btn-primary' ng-click="sendRecordAudio()">Send</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class='modal' id='takeSnapshotDiv'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Record Audio</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div>
+                            <video id="takeVideo" height="100%" width="100%" autoplay></video>
+                        </div>
+                        <div style="height: 200px;overflow-y:scroll" id="takeSnapshotPhotosDiv">
+                            <ul class="mailbox-attachments clearfix" id="takeSnapshotPhotos">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="button" class='btn btn-warning' onclick="takeSnapshot()">Take</button>
+                        <button type="button" class='btn btn-danger' onclick="stopStream()">Stop</button>
+                        <button type="submit" class='btn btn-primary' ng-click="sendTakeSnapshots()">Send</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class='modal' id='locationDivModal'>
+        <div class='modal-dialog modal-lg'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                        <span aria-hidden='true'>×</span><span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Location</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+
+                        <div id="allmap" style="height: 400px"></div>
+                        <div class='form-group' id="r-result">
+                            <label>Search:</label>
+                            <input type='text' class='form-control' id="suggestId" title="搜索"/>
+                            <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+                        </div>
+                    </div>
+                    <div class='modal-footer'>
+                        <button type="submit" class='btn btn-primary' ng-click="sendLocation()">Send</button>
                     </div>
                 </form>
 

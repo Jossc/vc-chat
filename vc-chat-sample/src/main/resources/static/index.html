@@ -202,6 +202,7 @@
 <!--进度条-->
 <script src="/webjars/adminlte/2.3.6/plugins/pace/pace.min.js"></script>
 <script src="js/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=yimdHOSqjplgZvTbH5ho8rZj"></script>
 
 <script>
     var app = angular.module("app", ['ngRoute']);
@@ -263,6 +264,8 @@
                                     outGraphicText(username, avatar, createdTime, lastMessage);
                                 } else if (priMessage.messageType === 7) {
                                     outputFileMessage(username, avatar, createdTime, lastMessage);
+                                } else if (priMessage.messageType === 9) {
+                                    outputLocation(username, avatar, createdTime, lastMessage);
                                 } else {
                                     outputMessage(username, avatar, createdTime, lastMessage);
                                 }
@@ -400,7 +403,7 @@
                             outputImg(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 2) {
                             outputVideo(username, avatar, createdTime, lastMessage);
-                        }else if (priMessage.messageType === 8) {
+                        } else if (priMessage.messageType === 8) {
                             outputVideo(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 3) {
                             outGraphicText(username, avatar, createdTime, lastMessage);
@@ -408,6 +411,8 @@
                             outputMessage(username, avatar, createdTime, lastMessage);
                         } else if (priMessage.messageType === 7) {
                             outputFileMessage(username, avatar, createdTime, lastMessage);
+                        } else if (priMessage.messageType === 9) {
+                            outputLocation(username, avatar, createdTime, lastMessage);
                         } else {
                             outputMessage(username, avatar, createdTime, lastMessage);
                         }
@@ -473,17 +478,151 @@
             $('#recordAudioDiv').modal('toggle')
         };
 
+        var searchLocation;
+        var currentLocation;
+        $scope.sendLocationDivModal = function () {
+            $("#allmap").html("");
+            // 百度地图API功能
+            var map = new BMap.Map("allmap");
+            var point = new BMap.Point(116.331398, 39.897445);
+            map.centerAndZoom(point, 12);
+
+            var geolocation = new BMap.Geolocation();
+            geolocation.getCurrentPosition(function (r) {
+                if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                    var mk = new BMap.Marker(r.point);
+                    map.addOverlay(mk);
+                    map.panTo(r.point);
+                }
+                else {
+                    alert('failed' + this.getStatus());
+                }
+            }, {enableHighAccuracy: true})
+            map.enableScrollWheelZoom(true);
+            $('#locationDivModal').modal({backdrop: 'static', keyboard: false})
+
+            // 百度地图API功能
+            function G(id) {
+                return document.getElementById(id);
+            }
+
+            map.centerAndZoom("北京", 12);                   // 初始化地图,设置城市和地图级别。
+
+            var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+                {
+                    "input": "suggestId"
+                    , "location": map
+                });
+
+            ac.addEventListener("onhighlight", function (e) {  //鼠标放在下拉列表上的事件
+                console.log(e);
+                var str = "";
+                var _value = e.fromitem.value;
+                var value = "";
+                if (e.fromitem.index > -1) {
+                    value = _value.province + _value.city + _value.district + _value.street + _value.business;
+                }
+                str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+                value = "";
+                if (e.toitem.index > -1) {
+                    _value = e.toitem.value;
+                    value = _value.province + _value.city + _value.district + _value.street + _value.business;
+                }
+                str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+                G("searchResultPanel").innerHTML = str;
+                setTimeout(function () {
+                    $(".tangram-suggestion-main").css({"z-index": 6666})
+                },1000);
+
+            });
+
+            ac.addEventListener("onconfirm", function (e) {    //鼠标点击下拉列表后的事件
+                console.log(e);
+                var _value = e.item.value;
+                searchLocation = _value.province + _value.city + _value.district + _value.street + _value.business;
+                G("searchResultPanel").innerHTML = "onconfirm<br />index = " + e.item.index + "<br />searchLocation = " + searchLocation;
+                setPlace();
+
+            });
+
+
+
+            function setPlace() {
+                map.clearOverlays();    //清除地图上所有覆盖物
+                var local = new BMap.LocalSearch(map, { //智能搜索
+                    onSearchComplete: function () {
+                        var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+                        currentLocation = pp;
+                        map.centerAndZoom(pp, 18);
+                        map.addOverlay(new BMap.Marker(pp));    //添加标注
+                    }
+                });
+                local.search(searchLocation);
+            }
+
+        };
+
+        $scope.sendLocation = function () {
+            navigator.geolocation.getCurrentPosition(function (r) {
+                var latitude = r.coords.latitude;
+                var longitude = r.coords.longitude;
+                if (currentLocation) {
+                    latitude = currentLocation.lat;
+                    longitude = currentLocation.lng;
+                    var message = {latitude: latitude, longitude: longitude, address: searchLocation};
+                    $scope.sendMessage(JSON.stringify(message), 9);
+                } else {
+                    // 百度地图API功能
+                    var point = new BMap.Point(longitude, latitude);
+                    var geoc = new BMap.Geocoder();
+                    geoc.getLocation(point, function (rs) {
+                        //addressComponents对象可以获取到详细的地址信息
+                        var addComp = rs.addressComponents;
+                        //将对应的HTML元素设置值
+                        console.log(addComp);
+                        var message = {latitude: latitude, longitude: longitude, address: addComp};
+                        $scope.sendMessage(JSON.stringify(message), 9);
+
+                    });
+                }
+            });
+        };
+
+        $scope.takeSnapshotDivModal = function () {
+            stopStream();
+            takeSnapshots = [];
+            $("#takeSnapshotPhotos").html("");
+            navigator.mediaDevices
+                .getUserMedia({
+                    audio: false,
+                    video: true
+                })
+                .then(function handleSuccess(stream) {
+                    window.stream = stream; // make stream available to browser console
+                    localStream = stream;
+                    var takeVideo = document.getElementById("takeVideo");
+                    takeVideo.srcObject = stream;
+                })
+                .catch(function handleError(error) {
+                    console.log('navigator.getUserMedia error: ', error);
+                });
+            $('#takeSnapshotDiv').modal('toggle')
+        };
+
         $scope.sendGraphicText = function (graphicText) {
             $scope.sendMessage(JSON.stringify(graphicText), 3);
         };
 
         $scope.startRecordVideo = function () {
-            var locatstream;
+            stopStream();
             var servers = {iceServers: []};
+            recordedBlobs = [];
             navigator.getUserMedia({
                 audio: true,
                 video: {mandatory: {maxWidth: 600, maxHeight: 233}}
             }, function (stream) {
+                localStream = stream;
                 var videoRecord = document.getElementById("recordVideo");
                 videoRecord.src = window.URL.createObjectURL(stream);
                 var options = {mimeType: 'video/webm'};
@@ -498,7 +637,7 @@
         $scope.sendRecordVideo = function () {
             var blob = new Blob(recordedBlobs, {type: 'video/webm'});
             var form = new FormData();
-            form.append("file", blob);
+            form.append("file", blob, "file.webm");
             form.append("toUserId", $scope.currentToUserId);
             form.append("dialogueId", $scope.currentToDialogueId);
             form.append("messageType", 2);
@@ -508,12 +647,14 @@
         };
 
         $scope.startRecordAudio = function () {
+            stopStream();
             navigator.getUserMedia({
                 audio: true
             }, function (stream) {
+                localStream = stream;
                 var recordAudio = document.getElementById("recordAudio");
                 recordAudio.src = window.URL.createObjectURL(stream);
-                mediaRecorder = new MediaRecorder(stream,{});
+                mediaRecorder = new MediaRecorder(stream, {});
                 mediaRecorder.ondataavailable = handleDataAvailable;
                 mediaRecorder.start(100); // collect 100ms of data
             }, function (error) {
@@ -525,12 +666,27 @@
             var blob = new Blob(recordedBlobs, {type: 'video/wav'});
             var form = new FormData();
             form.append("file", blob);
+            form.append("audio", blob, "audio.wav");
             form.append("toUserId", $scope.currentToUserId);
             form.append("dialogueId", $scope.currentToDialogueId);
             form.append("messageType", 8);
             var request = new XMLHttpRequest();
             request.open("POST", "/chat/upload");
             request.send(form);
+        };
+
+        $scope.sendTakeSnapshots = function () {
+            takeSnapshots.forEach(function (blob) {
+                var form = new FormData();
+                form.append("file", blob);
+                form.append("image", blob, "image.png");
+                form.append("toUserId", $scope.currentToUserId);
+                form.append("dialogueId", $scope.currentToDialogueId);
+                form.append("messageType", 1);
+                var request = new XMLHttpRequest();
+                request.open("POST", "/chat/upload");
+                request.send(form);
+            });
         };
 
         $scope.onlineUsers();
@@ -588,12 +744,22 @@
         }
     }
 
+    var localStream;
+
+    function stopStream() {
+        if (localStream) {
+            localStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }
+    };
 
     function stopRecordAudio() {
         mediaRecorder.stop();
         var recordAudio = document.getElementById("recordAudio");
         recordAudio.pause();
         console.log('Recorded Blobs: ', recordedBlobs);
+        stopStream()
     }
 
     function stopRecordVideo() {
@@ -601,6 +767,7 @@
         var recordVideo = document.getElementById("recordVideo");
         recordVideo.pause();
         console.log('Recorded Blobs: ', recordedBlobs);
+        stopStream()
     }
 
     function downloadVideoRecord() {
@@ -633,6 +800,31 @@
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }, 100);
+    }
+
+    var takeSnapshots = [];
+
+    function takeSnapshot() {
+        var canvas = document.createElement("canvas");
+        var video = document.getElementById("takeVideo");
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function (result) {
+            var imgUrl = URL.createObjectURL(result);
+            takeSnapshots.push(result);
+            var body = $('                                <li>\n' +
+                '                                    <span class="mailbox-attachment-icon has-img"><img src="' + imgUrl + '" alt="Attachment"></span>\n' +
+                '\n' +
+                '                                    <div class="mailbox-attachment-info">\n' +
+                '                                        <a href="' + imgUrl + '" target="_blank" class="mailbox-attachment-name"><i class="fa fa-camera"></i>' + new Date().getTime() + '.png</a>\n' +
+                '                                        <span class="mailbox-attachment-size">\n' +
+                '                          ' + (result.size / 1024 / 1024).toFixed(2) + ' MB\n' +
+                '                          <a href="' + imgUrl + '" target="_blank" class="btn btn-default btn-xs pull-right"><i class="fa fa-cloud-download"></i></a>\n' +
+                '                        </span>\n' +
+                '                                    </div>\n' +
+                '                                </li>');
+            $("#takeSnapshotPhotos").append(body);
+            document.getElementById('takeSnapshotPhotosDiv').scrollTop = document.getElementById('takeSnapshotPhotosDiv').scrollHeight;
+        });
     }
 
 
@@ -704,6 +896,32 @@
             '                                 alt="Photo">\n' +
             '                        </div>');
         $("#directChat").append(body)
+    }
+
+    function outputLocation(username, avatar, createdTime, message) {
+        var json = JSON.parse(message);
+        var id = "baidu" + new Date().getTime();
+        var body = $('<div class="box-body" >\n' +
+            '                            <div class="box-comment">\n' +
+            '                                <img class="img-circle img-sm" src="' + avatar + '"\n' +
+            '                                     alt="User Image">\n' +
+            '                                <div class="comment-text">\n' +
+            '                              <span class="username">\n' +
+            '                                 ' + username + '' +
+            '                                <span class="text-muted pull-right">' + new Date(createdTime).toDateString() + '</span></span><!-- /.username -->\n' +
+            '                                </div>\n' +
+            '                            </div>\n' +
+            '                            <div  style="height: 300px" id="' + id + '"></div>\n' +
+            '                        </div>');
+        $("#directChat").append(body);
+        // 百度地图API功能
+        var map = new BMap.Map(id);
+        var point = new BMap.Point(json.longitude, json.latitude);
+        var mk = new BMap.Marker(point);
+        map.addOverlay(mk);
+        map.panTo(point);
+        map.centerAndZoom(point, 12);
+        map.enableScrollWheelZoom(true);
     }
 
     function outputVideo(username, avatar, createdTime, message) {
